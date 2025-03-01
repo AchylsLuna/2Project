@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forgot Password - FoodieFinder</title>
+    <link rel="stylesheet" href="assets/forgotpass.css">
+</head>
+<body>
+    <header>
+        <div class="nav">
+            <div class="logo">
+            <img src="logo.png" width="125px">
+        </div>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About Us</a></li>
+                <li><a href="support.html">Support</a></li>
+            </ul>
+            <div>
+              <button class="login" onclick="window.location.href='newlogin.html';">Log in</button>
+            <button class="signup" onclick="window.location.href='signup.html';">Sign up</button>
+          </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="bg-image"></div> <!-- Background Image -->
+        <div class="reset-container">
+            <form action="/login" method="post">
+                <h2>Forgot Password</h2>
+    
+                <div class="input-group">
+                    <label for="email">Email Address</label>
+                    <div class="input-wrapper">
+                        <img src="email.png" alt="Email Icon">
+                        <input type="email" id="email" name="email" placeholder="Enter Email" required>
+                    </div>
+                </div>
+    
+                <div class="input-group">
+                    <label for="password">New Password</label>
+                    <div class="input-wrapper">
+                        <img src="lock.png" alt="Lock Icon">
+                        <input type="password" id="new-password" name="new-password" placeholder="Enter password" required>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="password">Confirm Password</label>
+                    <div class="input-wrapper">
+                        <img src="lock.png" alt="Lock Icon">
+                        <input type="password" id="confirm-password" name="confirm-password" placeholder="Enter password" required>
+                    </div>
+                </div>
+    
+                <button type="submit" class="reset-button" onclick="window.location.href='main.html'">Reset Password</button>
+
+            </form>
+        </div>
+    </main>
+    
+
+    <footer>
+        <div class="footer-container">
+        <div class="sec sci">
+        <div class="logo">
+        <img src="logo.png" width="250px">
+        <p>© 2025 FoodieFinder. All rights reserved</p><br/>
+        <ul class="icn">
+        <li><img src="twt.png" width="30px"></li>
+        <li><img src="fb.png" width="30px"></li>
+        <li><img src="yt.png" width="30px"></li>
+        <li><img src="link.png" width="30px"></li>
+        </ul>
+        </div>
+        </div>
+        <div class="sec navigation">
+        <h2>Navigation</h2>
+        <ul class="navg">
+        <li><a href="#">Home</a></li> <br/>
+        <li><a href="#">About Us</a></li> <br/>
+        <li><a href="#">Contact Us</a></li> <br/>
+        <li><a href="#">Support</a></li>
+        </ul>
+        </div>
+        <div class="sec contact">
+        <h2>Contact Information</h2>
+        <ul class="info">
+        <li>
+        <p><a href="tel:+09123456789">09123456789</a></p>
+        </li><br/>
+        <li>
+        <p><a href="foodiefinder@gmail.com">foodiefinder@gmail.com</a></p>
+        </li>
+        </ul>
+        </div>
+        <div class="sec help">
+        <h2>Helpful Links</h2>
+        <ul class="navg">
+        <li><a href="#">Privacy Policy</a></li> <br/>
+        <li><a href="#">Terms and Conditions</a></li> <br/>
+        <li><a href="#">FAQs</a></li> <br/>
+        </ul>
+        </div>
+        </div>
+        </footer>
+  </body>
+</html>

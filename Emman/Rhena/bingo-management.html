@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bingo Card Generator</title>
+    <link rel="stylesheet" href="assets/bingo.css">
+</head>
+<body>
+    <div class="container">
+        <div class="bingo-setup">
+            <h2>Create Bingo Card</h2>
+            <div class="bingo-grid">
+                <input type="text" class="bingo-cell" placeholder="Item 1">
+                <input type="text" class="bingo-cell" placeholder="Item 2">
+                <input type="text" class="bingo-cell" placeholder="Item 3">
+                <input type="text" class="bingo-cell" placeholder="Item 4">
+                <input type="text" class="bingo-cell" placeholder="Item 5">
+                <input type="text" class="bingo-cell" placeholder="Item 6">
+                <input type="text" class="bingo-cell" placeholder="Item 7">
+                <input type="text" class="bingo-cell" placeholder="Item 8">
+                <input type="text" class="bingo-cell" placeholder="Item 9">
+            </div>
+            <button id="generateBingo">Generate Bingo</button>
+        </div>
+        <div class="customer-progress">
+            <h2>Customer Progress</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Customer</th>
+                        <th>Slots Completed</th>
+                        <th>Progress</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>John Doe</td>
+                        <td>5/9</td>
+                        <td><progress value="5" max="9"></progress></td>
+                    </tr>
+                    <tr>
+                        <td>Jane Smith</td>
+                        <td>3/9</td>
+                        <td><progress value="3" max="9"></progress></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="discount-claims">
+            <h2>Discount Claims</h2>
+            <label for="bingoWinnerId">Enter Customer ID:</label>
+            <input type="text" id="bingoWinnerId" placeholder="Customer ID">
+            <button id="confirmDiscount">Confirm Discount</button>
+        </div>
+    </div>
+    <script>
+        document.getElementById("generateBingo").addEventListener("click", function() {
+    alert("Bingo card generated successfully!");
+});
+
+document.getElementById("confirmDiscount").addEventListener("click", function() {
+    const winnerId = document.getElementById("bingoWinnerId").value.trim();
+    if (winnerId === "") {
+        alert("Please enter a valid Customer ID.");
+    } else {
+        alert(`Discount confirmed for Customer ID: ${winnerId}`);
+    }
+});
+    </script>
+</body>
+</html>

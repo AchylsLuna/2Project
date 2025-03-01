@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics</title>
+    <link rel="stylesheet" href="assets/analytics.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- For charts -->
+</head>
+<body>
+    <div class="analytics-container">
+        <h1>Shop Analytics</h1>
+
+        <div class="analytics-grid">
+            <div class="analytics-card">
+                <h2>Total Orders</h2>
+                <p id="total-orders">0</p>
+            </div>
+            <div class="analytics-card">
+                <h2>Monthly Revenue</h2>
+                <p id="monthly-revenue">₱0</p>
+            </div>
+            <div class="analytics-card">
+                <h2>New Reviews</h2>
+                <p id="new-reviews">0</p>
+            </div>
+            <div class="analytics-card">
+                <h2>Returning Customers</h2>
+                <p id="returning-customers">0</p>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <h2>Sales Performance</h2>
+            <canvas id="salesChart"></canvas>
+        </div>
+
+        <div class="chart-container">
+            <h2>Review Ratings</h2>
+            <canvas id="ratingsChart"></canvas>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Mock analytics data
+            let analyticsData = {
+                totalOrders: 1200,
+                monthlyRevenue: 50000,
+                newReviews: 85,
+                returningCustomers: 450,
+                salesData: [100, 200, 150, 400, 300, 600, 700], // Sales per month
+                ratingsData: [5, 20, 50, 10, 5] // Ratings breakdown
+            };
+
+            // Update analytics stats
+            document.getElementById("total-orders").textContent = analyticsData.totalOrders;
+            document.getElementById("monthly-revenue").textContent = `₱${analyticsData.monthlyRevenue.toLocaleString()}`;
+            document.getElementById("new-reviews").textContent = analyticsData.newReviews;
+            document.getElementById("returning-customers").textContent = analyticsData.returningCustomers;
+
+            // Sales Chart
+            new Chart(document.getElementById("salesChart"), {
+                type: "line",
+                data: {
+                    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
+                    datasets: [{
+                        label: "Sales",
+                        data: analyticsData.salesData,
+                        borderColor: "blue",
+                        fill: false
+                    }]
+                },
+                options: {
+                    responsive: true
+                }
+            });
+
+            // Ratings Chart
+            new Chart(document.getElementById("ratingsChart"), {
+                type: "pie",
+                data: {
+                    labels: ["⭐ 1", "⭐ 2", "⭐ 3", "⭐ 4", "⭐ 5"],
+                    datasets: [{
+                        data: analyticsData.ratingsData,
+                        backgroundColor: ["red", "orange", "yellow", "lightgreen", "green"]
+                    }]
+                },
+                options: {
+                    responsive: true
+                }
+            });
+        });
+    </script>
+</body>
+</html>

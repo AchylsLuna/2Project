@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review Management</title>
+    <link rel="stylesheet" href="assets/review-management.css">
+</head>
+<body>
+    <div class="review-container">
+        <h1>Review Management</h1>
+
+        <div class="review-list">
+            <h2>Pending Reviews</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Review ID</th>
+                        <th>Customer Name</th>
+                        <th>Review</th>
+                        <th>Rating</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="review-items">
+                    <!-- Reviews will be dynamically added here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Sample reviews
+            let reviews = [
+                { id: "R001", name: "John Doe", review: "Great food!", rating: 5, status: "Pending" },
+                { id: "R002", name: "Jane Smith", review: "Service was slow.", rating: 3, status: "Pending" }
+            ];
+
+            let reviewTable = document.getElementById("review-items");
+
+            function renderReviews() {
+                reviewTable.innerHTML = "";
+                reviews.forEach((review, index) => {
+                    let row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${review.id}</td>
+                        <td>${review.name}</td>
+                        <td>${review.review}</td>
+                        <td>${review.rating} ⭐</td>
+                        <td class="status">${review.status}</td>
+                        <td>
+                            <button class="approve-btn" data-index="${index}">Approve</button>
+                            <button class="delete-btn" data-index="${index}">Delete</button>
+                        </td>
+                    `;
+                    reviewTable.appendChild(row);
+                });
+
+                document.querySelectorAll(".approve-btn").forEach(btn => {
+                    btn.addEventListener("click", function () {
+                        let index = this.getAttribute("data-index");
+                        reviews[index].status = "Approved";
+                        renderReviews();
+                    });
+                });
+
+                document.querySelectorAll(".delete-btn").forEach(btn => {
+                    btn.addEventListener("click", function () {
+                        let index = this.getAttribute("data-index");
+                        reviews.splice(index, 1);
+                        renderReviews();
+                    });
+                });
+            }
+
+            renderReviews();
+        });
+    </script>
+</body>
+</html>

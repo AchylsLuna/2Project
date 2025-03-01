@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup - FoodieFinder</title>
+    <link rel="stylesheet" href="assets/shopdetails.css">
+</head>
+<body>
+    <header>
+        <div class="nav">
+            <div class="logo">
+            <img src="logo.png" width="125px">
+        </div>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a  href="about.html">About Us</a></li>
+                <li><a href="support.html">Support</a></li>
+            </ul>
+            <div>
+              <button class="login" onclick="window.location.href='newlogin.html';">Log in</button>
+            <button class="signup" onclick="window.location.href='signup.html';">Sign up</button>
+          </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="bg-image"></div>
+    
+        <div class="form-container">
+            <form action="/signup" method="post">
+                <h2>Shop Details</h2>
+                
+                <div class="input-group">
+                    <label for="name">Shop Name</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="name" name="txtName" maxlength="18" placeholder="Enter name" required>
+                    </div>
+                </div>
+    
+                <div class="input-group">
+                    <label for="address">Shop Address</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="address" name="txtAddress" maxlength="50" placeholder="Enter address" required>
+                    </div>
+                </div>
+    
+                <div class="input-group">
+                    <label for="hours">Operating Hours</label>
+                    <div class="input-wrapper">
+                        <select id="hours" name="txtOperatingHours" required>
+                            <option value="" selected disabled>Select Hours</option>
+                            <option value="9am-5pm">9 AM - 5 PM</option>
+                            <option value="10am-6pm">10 AM - 6 PM</option>
+                            <option value="11am-7pm">11 AM - 7 PM</option>
+                            <option value="24hrs">24 Hours</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Shop Category - Dropdown with placeholder -->
+                <div class="input-group">
+                    <label for="category">Shop Category</label>
+                    <div class="input-wrapper">
+                        <select id="category" name="txtCategory" required>
+                            <option value="" selected disabled>Select Category</option>
+                            <option value="restaurant">Restaurant</option>
+                            <option value="cafe">Cafe</option>
+                            <option value="grocery">Grocery</option>
+                            <option value="bakery">Bakery</option>
+                            <option value="clothing">Ice Cream</option>
+                            <option value="electronics">Korean Food</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="description">Shop Description</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="Description" maxlength="50" name="txtDesc"  required>
+                    </div>
+                </div>
+
+                <button type="submit" class="shop-button" onclick="window.location.href='registration.html'">Get Started</button>
+            </form>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-container">
+            <div class="sec sci">
+                <div class="logo">
+                    <img src="logo.png" width="250px">
+                    <p>&copy; 2025 FoodieFinder. All rights reserved</p>
+                    <ul class="icn">
+                        <li><img src="twt.png" width="30px"></li>
+                        <li><img src="fb.png" width="30px"></li>
+                        <li><img src="yt.png" width="30px"></li>
+                        <li><img src="link.png" width="30px"></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="sec navigation">
+                <h2>Navigation</h2>
+                <ul class="navg">
+                    <li><a href="active">Home</a></li> </br>
+                    <li><a href="about.html">About Us</a></li> </br>
+                    <li><a href="#">Contact Us</a></li> </br>
+                    <li><a href="support.html">Support</a></li> </br>
+                </ul>
+            </div>
+            <div class="sec help">
+                <h2>Helpful Links</h2>
+                <ul class="navg">
+                    <li><a href="#">Privacy Policy</a></li> </br>
+                    <li><a href="#">Terms and Conditions</a></li> </br>
+                    <li><a href="#">FAQs</a></li> </br>
+                </ul>
+            </div>
+        </div>
+      </footer>      
+
+</body>
+</html>

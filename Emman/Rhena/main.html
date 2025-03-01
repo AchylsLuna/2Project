@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FoodieFinder Admin</title>
+    <link rel="stylesheet" href="assets/main.css">
+</head>
+<body>
+    <div class="sidebar">   
+        <img src="" alt="FoodieFinder Logo" class="sidebar-logo">
+        <h2>FoodieFinder</h2>
+        <ul>
+            <li><a href="#" data-page="dashboard" onclick="loadContent('dashboard')" class="active">Dashboard</a></li>
+            <li><a href="#" data-page="menu-management" onclick="loadContent('menu-management')">Menu</a></li>
+            <li><a href="#" data-page="pre-order-management" onclick="loadContent('pre-order-management')">Orders</a></li>
+            <li><a href="#" data-page="bingo-management" onclick="loadContent('bingo-management')">Bingo-Card</a></li>
+            <li><a href="#" data-page="analytics" onclick="loadContent('analytics')">Analytics</a></li>
+            <li><a href="#" data-page="review-management" onclick="loadContent('review-management')">Reviews</a></li>
+            <li><a href="#" data-page="profile-settings" onclick="loadContent('profile-settings')">Profile Settings</a></li>
+            <li><a href="#" data-page="shop-profile-management" onclick="loadContent('shop-profile-management')">Shop Profile Management</a></li>
+        </ul>
+        
+        <div class="logout">
+            <a href="index.html">Logout</a>
+        </div>
+    </div>
+
+    <div class="main-content" data-page="">
+        <!-- Default content (dashboard.html) is loaded dynamically -->
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            loadContent('dashboard'); // Ensure dashboard loads by default
+        });
+
+        function loadContent(page) {
+            let mainContent = document.querySelector('.main-content');
+
+            if (!mainContent) {
+                console.error("Error: .main-content container not found.");
+                return;
+            }
+
+            if (mainContent.getAttribute('data-page') === page) {
+                return; // Prevent reloading the same page
+            }
+
+            fetch(`${page}.html`, { cache: "no-cache" }) // Prevent caching issues
+                .then(response => {
+                    if (!response.ok) throw new Error("Page not found");
+                    return response.text();
+                })
+                .then(data => {
+                    mainContent.setAttribute('data-page', page);
+                    mainContent.innerHTML = data;
+
+                    // Remove active class from all links
+                    document.querySelectorAll(".sidebar ul li a").forEach(link => {
+                        link.classList.remove("active");
+                    });
+
+                    // Add active class to the clicked link
+                    let activeLink = document.querySelector(`.sidebar ul li a[data-page="${page}"]`);
+                    if (activeLink) activeLink.classList.add("active");
+                })
+                .catch(error => {
+                    mainContent.innerHTML = '<h1>Error</h1><p>Page not found.</p>';
+                    console.error("Error loading page:", error);
+                });
+        }
+    </script>
+</body>
+</html>

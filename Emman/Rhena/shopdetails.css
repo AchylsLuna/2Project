@@ -1,0 +1,422 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background: url(../sdImg.jpeg);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    }
+    
+    body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    }
+
+/* Header Styles */
+/*header*/
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+ 
+.nav{
+    background: #FAA96C;
+    height: 80px;
+    width: 100%; 
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 30px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+}
+
+.logo{
+    margin-left: 100px;
+}
+.nav ul{
+    display: flex;
+    list-style: none;
+}
+
+.nav ul li{
+    margin-right: 30px;
+}
+
+.nav ul li a{
+    text-decoration: none;
+    color: black;
+    font-weight: 500;
+    font-family: inter;
+    font-size: 17px;
+}
+
+.nav ul li a.active,
+.nav ul li a:hover{
+    color: white;
+}
+
+.nav ul li a::after{
+    content: '';
+    width: 0;
+    height: 3px;
+    background-color: white;
+    display: block;
+    margin: auto;
+    transition: all .5s;
+}
+
+.nav ul li a:hover::after{
+    width: 100%;
+    transition: width 0.3s;
+}
+
+button, .login{
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border: none;
+  background-color: rgba(255, 255, 255, 0.5);
+  color: black;
+  border-radius: 10px;
+  margin-right: 20px;
+}
+
+button, .signup{
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border: none;
+  background-color: black;
+  color: white;
+  border-radius: 10px;
+  margin-right:40px ;
+}
+
+button:hover,.signup:hover {
+  background-color: orangered; 
+}
+
+button:hover, .login:hover{
+  background-color: white; 
+}
+
+
+/* Main Content Styles */
+main {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    padding: 20px;
+}
+
+
+/* Input Fields */
+.input-group {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
+
+/* Input with Icons */
+.input-wrapper {
+    display: flex;
+    height: 50px;
+    align-items: center;
+    background: white;
+    border-radius: 5px;
+    padding: 3px;
+}
+
+.input-wrapper img {
+    width: 18px;
+    margin-right: 10px;
+    margin-left: 5px;
+}
+
+.input-wrapper input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: white;
+    outline: none;
+    font-size: 16px;
+}
+
+.input-wrapper input::placeholder {
+    color: #bbb;
+}
+
+
+.input-group select {
+    width: 100%;
+    padding: 10px;
+    padding-left: 35px; /* Space for the icon */
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    appearance: none; /* Remove default dropdown arrow */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+.input-group select:focus {
+    border-color: #4CAF50; /* Green color on focus */
+    outline: none;
+}
+
+.input-group select::placeholder {
+    color: #888;
+}
+
+.input-wrapper img {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* Right-align options in the dropdown */
+/* Styling for the Operating Hours and Shop Category dropdowns */
+.input-group select {
+    width: 100%;
+    padding: 10px;
+    padding-left: 35px; /* Space for the icon */
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    appearance: none; /* Remove default dropdown arrow */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    text-align: left; /* Align text to the left */
+}
+
+/* Create custom triangle button for the dropdown */
+.input-group select {
+    background-color: white;
+    padding-right: 30px; /* Space for the dropdown arrow */
+    position: relative;
+}
+
+/* Triangle arrow for dropdown */
+.input-group select::after {
+    content: '';
+    position: absolute;
+    right: 10px; /* Position the arrow */
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid #333; /* Dark triangle arrow */
+}
+
+/* Focus styling for the select dropdown */
+.input-group select:focus {
+    border-color: #4CAF50; /* Green border on focus */
+    outline: none;
+}
+
+/* Style for placeholder text (this is if you want to show placeholder text in select dropdowns) */
+.input-group select option:disabled {
+    color: #888; /* Grey color for placeholder */
+}
+
+
+
+
+/* Centered Form */ 
+.form-container {
+    background: black;
+    padding: 50px;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    text-align: center;
+    position: relative;
+    z-index: 1;
+}
+
+.form-container .input-group label{
+    color: white;
+}
+
+/* Form Header */
+.form-container h2 {
+    font-size: 40px;
+    margin-bottom: 30px;
+    text-align: left;
+    color: white;
+}
+
+/* Login Link */
+.form-container p {
+    font-size: 14px;
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+.form-container p a {
+    color: #E5935B;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.form-container p a:hover {
+    text-decoration: underline;
+}
+
+/* Input Fields */
+.form-container label {
+    display: block;
+    margin: 10px 0 5px;
+    font-size: 14px;
+    text-align: left;
+}
+
+.form-container input {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    background: #fff;
+    color: #000;
+    font-size: 14px;
+}
+
+/* Signup Button */
+.shop-button {
+    width: 100%;
+    padding: 12px;
+    background-color: #E5935B;
+    color: black;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 15px;
+}
+
+.shop-button:hover {
+    background-color: #d07e4a;
+}
+/* Footer Styles */
+footer {
+    margin-top: 20px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    height: auto;
+    padding: 50px;
+    background: black;
+    }
+    
+    footer .logo {
+    margin-top: -15px;
+    margin-left: 15px;
+    }
+    
+    .icn-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 5px; /* Adjust spacing as needed */
+      width: 100%;
+    }
+    
+    .icn {
+      display: flex;
+      align-items: center;
+      gap: 25px; /* Ensures spacing between icons */
+    }
+    
+    .icn img {
+    width: 40px;
+    height: 40px;
+    margin: 2px;
+    }
+    
+    footer .footer-container {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      grid-gap: 200px;
+      width: fit-content; /* Ensures the grid only takes necessary width */
+      justify-content: center;
+    }
+    
+    footer .footer-container .sec h2 {
+    position: relative;
+    color: white;
+    font-weight: 700;
+    margin-bottom: 15px;
+    }
+    
+    footer .footer-container .sci p {
+    color: white;
+    }
+
+    footer .footer-container .sec ul li a{
+        color: white;
+        text-decoration: none;
+        }
+
+    footer .footer-container .sec ul li a:hover{
+        text-decoration: underline;
+        }    
+    
+    footer .footer-container .sec h2::before {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 50px;
+    height: 2px;
+    }
+  
+/* Responsive Design */
+@media (max-width: 768px) {
+    .footer-container {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .footer-logo {
+        text-align: center;
+    }
+
+    .footer-logo img {
+        margin-bottom: 10px;
+    }
+
+    .footer-section {
+        margin-bottom: 20px;
+    }
+
+    .social-icons a img {
+        margin-right: 5px;
+    }
+}

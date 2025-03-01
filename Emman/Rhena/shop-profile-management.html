@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop Profile Management</title>
+    <link rel="stylesheet" href="assets/shop-profile-management.css">
+</head>
+<body>
+    <div class="shop-profile-container">
+        <h1>Shop Profile Management</h1>
+
+        <div class="shop-banner">
+            <img src="shop-banner.jpg" alt="Shop Banner" id="banner-preview">
+            <input type="file" id="banner-upload" accept="image/*">
+        </div>
+
+        <div class="shop-info">
+            <label for="shop-name">Shop Name:</label>
+            <input type="text" id="shop-name" placeholder="Enter shop name">
+
+            <label for="shop-description">Description:</label>
+            <textarea id="shop-description" placeholder="Enter shop description"></textarea>
+
+            <label for="shop-location">Location:</label>
+            <input type="text" id="shop-location" placeholder="Enter shop location">
+        </div>
+
+        <div class="shop-logo">
+            <img src="shop-logo.png" alt="Shop Logo" id="logo-preview">
+            <input type="file" id="logo-upload" accept="image/*">
+        </div>
+
+        <button class="save-btn">Save Changes</button>
+    </div>
+
+    <script>
+        document.getElementById("logo-upload").addEventListener("change", function(event) {
+            let reader = new FileReader();
+            reader.onload = function() {
+                document.getElementById("logo-preview").src = reader.result;
+            }
+            reader.readAsDataURL(event.target.files[0]);
+        });
+
+        document.getElementById("banner-upload").addEventListener("change", function(event) {
+            let reader = new FileReader();
+            reader.onload = function() {
+                document.getElementById("banner-preview").src = reader.result;
+            }
+            reader.readAsDataURL(event.target.files[0]);
+        });
+    </script>
+</body>
+</html>

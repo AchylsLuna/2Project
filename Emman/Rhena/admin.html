@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel - Registration Verification</title>
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+<div class="container">
+  <h1>Admin Panel</h1>
+  
+  <table class="user-table">
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>Email</th>
+        <th>BIR Certificate</th>
+        <th>Mayor's Permit</th>
+        <th>Registration Certificate</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="user-list">
+      <tr>
+        <td>john_doe</td>
+        <td>john.doe@example.com</td>
+        <td><a href="#">View BIR Cert</a></td>
+        <td><a href="#">View Mayor's Permit</a></td>
+        <td><a href="#">View Registration Cert</a></td>
+        <td class="action-btns">
+          <button class="button" onclick="approveRegistration('john_doe')">Approve</button>
+          <button class="button reject" onclick="rejectRegistration('john_doe')">Reject</button>
+        </td>
+      </tr>
+      <tr>
+        <td>jane_smith</td>
+        <td>jane.smith@example.com</td>
+        <td><a href="#">View BIR Cert</a></td>
+        <td><a href="#">View Mayor's Permit</a></td>
+        <td><a href="#">View Registration Cert</a></td>
+        <td class="action-btns">
+          <button class="button" onclick="approveRegistration('jane_smith')">Approve</button>
+          <button class="button reject" onclick="rejectRegistration('jane_smith')">Reject</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<script>
+  function approveRegistration(username) {
+    alert("Registration for " + username + " approved.");
+    // Here, you would trigger the server-side code to update the registration status
+  }
+
+  function rejectRegistration(username) {
+    alert("Registration for " + username + " rejected.");
+    // Here, you would trigger the server-side code to reject the registration
+  }
+</script>
+
+</body>
+</html>

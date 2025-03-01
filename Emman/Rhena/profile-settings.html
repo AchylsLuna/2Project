@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Settings</title>
+    <link rel="stylesheet" href="assets/profile-settings.css">
+</head>
+<body>
+    <div class="profile-container">
+        <h1>Profile Settings</h1>
+        <form id="profileForm">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" value="admin123">
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" value="admin@example.com">
+
+            <label for="password">New Password:</label>
+            <input type="password" id="password" name="password">
+
+            <button type="submit">Save Changes</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('profileForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            alert('Profile updated successfully!');
+        });
+    </script>
+</body>
+</html>

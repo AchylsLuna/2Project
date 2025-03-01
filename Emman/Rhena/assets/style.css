@@ -1,0 +1,588 @@
+/*header*/
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body{
+    margin: 0 100;
+    background-color: white ;
+
+} 
+.nav{
+    background: #FAA96C;
+    height: 80px;
+    width: 100%; 
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 30px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+}
+
+.logo{
+    margin-left: 100px;
+}
+.nav ul{
+    display: flex;
+    list-style: none;
+}
+
+.nav ul li{
+    margin-right: 30px;
+}
+
+.nav ul li a{
+    text-decoration: none;
+    color: black;
+    font-weight: 500;
+    font-family: inter;
+    font-size: 17px;
+}
+
+.nav ul li a.active,
+.nav ul li a:hover{
+    color: white;
+}
+
+.nav ul li a::after{
+    content: '';
+    width: 0;
+    height: 3px;
+    background-color: white;
+    display: block;
+    margin: auto;
+    transition: all .5s;
+}
+
+.nav ul li a:hover::after{
+    width: 100%;
+    transition: width 0.3s;
+}
+
+button, .login{
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border: none;
+  background-color: rgba(255, 255, 255, 0.5);
+  color: black;
+  border-radius: 10px;
+  margin-right: 20px;
+}
+
+button, .signup{
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border: none;
+  background-color: black;
+  color: white;
+  border-radius: 10px;
+  margin-right:40px ;
+}
+
+button:hover,.signup:hover {
+  background-color: orangered; 
+}
+
+button:hover, .login:hover{
+  background-color: white; 
+}
+
+
+/*first main*/
+
+.home-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 90%;
+    margin: 65px auto;
+}
+
+.home1{
+    margin-top: 90px;
+    margin-left: 100px;
+}
+.home1 h3{
+    font-family: sans-serif;
+    font-size: 30px;
+}
+
+.home1 h1{
+    color: #D67D3E;
+    text-shadow: 5px 5px 5px #3C3D37;
+    font-size: 100px;
+    font-family: sans-serif;
+    margin-bottom: 10px;
+}
+
+.home1 p{
+    font-size: 25px;
+    line-height: 1.6;
+    letter-spacing: 4px;
+    margin-left: 20px;
+    margin-bottom: 30px;
+    max-width: 750px;
+    font-family: sans-serif;
+}
+
+.home2 img{
+    width: 50%;
+    float: right;
+    margin-top: -550px;
+}
+
+
+
+/*second main*/
+
+.container {
+    margin-top: 250px;
+    text-align: center;
+    width: 70%; 
+  }
+
+  .top{
+    margin-top: 500px;
+    text-align: left;
+    margin-bottom: 10px;
+    font-size: 40px;
+    letter-spacing: 2fpx;
+    color: black;
+    margin-left: 100px;
+  }
+
+
+.container .h1{
+    size: 20px;
+    margin-left: -15px;
+}      
+.box {
+    background-color: black;
+    color: white;
+    padding: 20px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    width: 125%;
+    height: 400px;
+    margin-left: 100px;
+      }
+      
+      .box-content {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        padding-left: 20px;
+      }
+      
+      .box-text {
+        max-width: 100%;
+        text-align:
+        left;
+      }
+
+      .box-text h1 {
+        font-size: 35px;
+        color: white;
+        margin-bottom: 5px;
+      }
+      
+      .box-text p {
+        margin: 0;
+        font-size: 25px;
+        line-height: 1.6;
+        padding-bottom: 20px;
+      }
+      
+      .box-image {
+        flex: 1; /* Allows the image to take available space */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .box-image img {
+        width: 500px; /* Adjust width as needed */
+        height: 360px; /* Maintains aspect ratio */
+        max-width: 150%; /* Prevents overflow */
+        margin-left: 130px;
+    }
+      
+      .box button {
+        background-color: #FAA96C;
+        color: black;
+        border: none;
+        justify-content: flex-start;
+        padding: 12px 24px;
+        font-size: 18px;
+        width: 150px;
+        margin-top: 10px;
+        cursor: pointer;
+        border-radius: 40px;
+        margin-right: 800px;
+      }
+      
+      .box button:hover {
+        background-color: white;
+      }
+
+
+
+/*list shop*/
+
+      .follow{
+        margin-top: 250px;
+        margin-left: 130px;
+        letter-spacing: 2px;
+      }
+
+   
+      .icon-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 60%;
+        padding-left: 120px;
+        max-width: 1000px;
+      }
+      
+      .icon {
+        margin-top: -100px;
+        text-align: center;
+        padding: 40px;
+        border-radius: 8px;
+        width: 10%;
+      }
+      
+      .icon img {
+        margin-top: -800px;
+        width: 40px;  
+        height: 40px; 
+      }
+      
+      .follow h1{
+      
+        font-size: 35px;
+      }
+
+      .follow p {
+        margin-top: 10px;
+        width: 700px;
+        color: black;
+        font-size: 25px;
+        line-height: 1.6;
+      }
+      
+      .follow2 img{
+        width: 150%;
+        float: right;
+        margin-top: -350px;
+        margin-right: -600px;
+    }     
+
+/*download app*/
+
+.fourth-container {
+    margin-top: 0px;
+    align-items:  center;
+    width: 73%;
+    margin-bottom: 100px; 
+  }
+
+  .upper {
+    margin-top: 250px;
+    text-align: left;
+    margin-bottom: 40px;
+    font-size: 40px;
+    color: black;
+    margin-left: 110px;
+  }
+
+
+.fourth-container .h1{
+    size: 20px;
+}      
+.download-app {
+    background-color: black;
+    height: 400px;
+    color: white;
+    padding: 30px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    width: 120%;
+    margin-left: 100px;
+      }
+      
+      .app-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+      }
+      
+      .app-text {
+        max-width: 60%;
+        text-align: left;
+      }
+      .app-text h1{
+        text-align: left;
+        font-size: 35px;
+      }
+      
+      .app-text p {
+        font-size: 25px;
+        line-height: 1.6;
+        margin: 10px;
+      }
+      
+      .app-image img {
+        max-width: 400px; 
+        height: auto;
+      }
+      
+      .download-app button {
+        background-color: #FAA96C;
+        color: black;
+        border: none;
+        justify-content: flex-start;
+        padding: 12px 24px;
+        font-size: 18px;
+        width: 200px;
+        margin-top: 10px;
+        cursor: pointer;
+        border-radius: 40px;
+        margin-right: 800px;
+      }
+      
+      .download-app button:hover {
+        background-color: white;
+      }
+
+      
+/*footer*/
+
+  footer {
+    margin-top: 20px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    height: auto;
+    padding: 50px;
+    background: black;
+    }
+    
+    footer .logo {
+    margin-top: -15px;
+    margin-left: 15px;
+    }
+    
+    .icn-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 5px; /* Adjust spacing as needed */
+      width: 100%;
+    }
+    
+    .icn {
+      display: flex;
+      align-items: center;
+      gap: 25px; /* Ensures spacing between icons */
+    }
+    
+    .icn img {
+    width: 40px;
+    height: 40px;
+    margin: 2px;
+    }
+    
+    footer .footer-container {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      grid-gap: 200px;
+      width: fit-content; /* Ensures the grid only takes necessary width */
+      justify-content: center;
+    }
+    
+    footer .footer-container .sec h2 {
+    position: relative;
+    color: white;
+    font-weight: 700;
+    margin-bottom: 15px;
+    }
+    
+    footer .footer-container .sci p {
+    color: white;
+    }
+
+    footer .footer-container .sec ul li a{
+        color: white;
+        text-decoration: none;
+        }
+
+    footer .footer-container .sec ul li a:hover{
+        text-decoration: underline;
+        }    
+    
+    footer .footer-container .sec h2::before {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 50px;
+    height: 2px;
+    }
+  /* Responsive Design */
+@media (max-width: 768px) {
+  .footer-container {
+      flex-direction: column;
+      text-align: center;
+  }
+
+  .footer-logo {
+      text-align: center;
+  }
+
+  .footer-logo img {
+      margin-bottom: 10px;
+  }
+
+  .footer-section {
+      margin-bottom: 20px;
+  }
+
+  .social-icons a img {
+      margin-right: 5px;
+  }
+}
+
+
+/* About Us Section */
+.content {
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 50px;
+}
+
+
+.content-item .message h2 {
+    font-size: 40px;
+    color: black;
+    padding-left: 50px;
+    padding-top: 50px;
+}
+
+.content-item .message h3 {
+    font-size: 25px;
+    font-weight: normal;
+    color: black;
+    padding-left: 50px;
+}
+
+.content-item .message h1 {
+    font-size: 25px;
+    color: black;
+    width: 200px;
+}
+
+.content-item .message .behind {
+  width: 700px;
+  
+}
+
+.behind h1 {
+  font-size: 10px;
+}
+
+.content-item .message li {
+    font-size: 25px;
+    color: black;
+    padding-left: 75px;
+}
+
+.content-item .message p {
+    font-size: 25px;
+    color: black; 
+
+}
+
+.content-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+
+.message {
+    flex: 1;
+    max-width: 100%;
+    padding-right: 20px;
+    width: auto;
+}
+
+.content-item .right-image {
+    height: 500px;
+    width: 500px;
+    margin-left: 500px;
+    flex-shrink: 0;
+}
+
+
+/*support*/
+
+.content {
+    margin-top: 75px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    width: 100%;
+}
+
+.content-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.content-item img {
+    margin-right: 280px;
+    width: 350px;
+    height: 350px;
+    order: 2;
+}
+
+.content-item .message {
+    display: flex;
+    font-size: 100px;
+    flex-direction: column;
+    order: 1;
+}
+
+
+.content-item .message h1 {
+    width: 450px;
+    height: 100px;
+    background-color: black;
+    border: none;
+    color: white;
+    text-align: center;
+    border-top-right-radius: 15px;
+    border-bottom-right-radius: 15px;
+    margin-bottom: 10px;
+    font-size: 50px;
+    padding: 15px;
+}
+
+.content-item .message p {
+    font-size: 25px;
+    margin: 50px;
+}
