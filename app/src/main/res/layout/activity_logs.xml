@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".LogsActivity"
+    android:layout_gravity="center"
+    android:background="@color/white">
+
+    <TextView
+        android:id="@+id/txtduty"
+        android:layout_width="225dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="77dp"
+        android:layout_marginBottom="4dp"
+        android:text="Let's Track your Duty"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/attendanceLayout"
+        app:layout_constraintEnd_toStartOf="@+id/profilee"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/pstLogs"
+        android:layout_width="283dp"
+        android:layout_height="48dp"
+        android:backgroundTint="@color/green"
+        android:text="@string/view_past_logs"
+        android:textAlignment="center"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.523"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sublog"
+        app:layout_constraintVertical_bias="0.205"
+        tools:ignore="MissingConstraints" />
+
+    <LinearLayout
+        android:id="@+id/attendanceLayout"
+        android:layout_width="382dp"
+        android:layout_height="92dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/container"
+        android:elevation="19dp"
+        android:orientation="vertical"
+        android:padding="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/dutyTitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.62"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profilee"
+        tools:ignore="MissingConstraints">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/schedules"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="329dp"
+            android:layout_height="69dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/container"
+            android:elevation="19dp"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal"
+            android:padding="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/time_in"
+                android:textSize="15sp" />
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:gravity="center"
+                android:text="@string/time_out"
+                android:textSize="15sp" />
+
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/dutyTitle"
+        android:layout_width="174dp"
+        android:layout_height="36dp"
+        android:layout_marginTop="4dp"
+        android:text="@string/add_duty_logs"
+        android:textAlignment="center"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.143"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/attendanceLayout"
+        tools:ignore="MissingConstraints" />
+
+    <LinearLayout
+        android:id="@+id/sublog"
+        android:layout_width="348dp"
+        android:layout_height="375dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="7dp"
+        android:layout_marginBottom="88dp"
+        android:background="@drawable/container"
+        android:elevation="19dp"
+        android:orientation="vertical"
+        android:padding="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.539"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dutyTitle"
+        app:layout_constraintVertical_bias="1.0">
+
+
+        <!-- Date Label -->
+
+        <!-- Date Input -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            android:paddingBottom="4dp"
+            android:text="@string/date"
+            android:textColor="@android:color/black"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/dateInput"
+            android:layout_width="320dp"
+            android:layout_height="64dp"
+            android:background="@android:color/white"
+            android:clickable="true"
+            android:focusable="false"
+            android:hint="Enter Date"
+            android:inputType="date"
+            android:padding="8dp"
+            android:textSize="14sp" />
+
+
+        <!-- Time In Label -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="4dp"
+            android:text="@string/timee"
+            android:textColor="@android:color/black"
+            android:textSize="16sp" />
+
+        <!-- Time In Input -->
+        <EditText
+            android:id="@+id/timeIn"
+            android:layout_width="322dp"
+            android:layout_height="67dp"
+            android:background="@android:color/white"
+            android:clickable="true"
+            android:focusable="false"
+            android:hint="Enter Time In"
+            android:inputType="time"
+            android:padding="8dp"
+            android:textSize="14sp" />
+
+
+        <!-- Time Out Label -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            android:paddingBottom="4dp"
+            android:text="@string/time_out"
+            android:textColor="@android:color/black"
+            android:textSize="16sp" />
+
+        <!-- Time Out Input -->
+        <EditText
+            android:id="@+id/timeOut"
+            android:layout_width="315dp"
+            android:layout_height="54dp"
+            android:background="@android:color/white"
+            android:clickable="true"
+            android:focusable="true"
+            android:hint="@string/enter_time_out"
+            android:inputType="time"
+            android:padding="8dp"
+            android:textSize="14sp" />
+
+        <!-- Spacer to push the button to the bottom -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <!-- Submit Button -->
+        <Button
+            android:id="@+id/LogsSubmit"
+            android:layout_width="245dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:backgroundTint="@color/green"
+            android:text="@string/submit" />
+
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/profilee"
+        android:layout_width="71dp"
+        android:layout_height="52dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/profile_con"
+
+        android:backgroundTint="@color/green"
+        app:layout_constraintBottom_toTopOf="@+id/attendanceLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.911"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.934" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
