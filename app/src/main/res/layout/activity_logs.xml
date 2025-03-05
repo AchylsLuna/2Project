@@ -9,6 +9,7 @@
     android:background="@color/white">
 
     <!-- Fixed Attendance Layout -->
+
     <ImageButton
         android:id="@+id/profilee"
         android:layout_width="77dp"
@@ -41,8 +42,8 @@
 
     <LinearLayout
         android:id="@+id/attendanceLayout"
-        android:layout_width="399dp"
-        android:layout_height="213dp"
+        android:layout_width="409dp"
+        android:layout_height="168dp"
         android:layout_margin="16dp"
         android:background="@drawable/container"
         android:elevation="19dp"
@@ -57,103 +58,160 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingBottom="8dp"
-            android:text="Logs Status"
+            android:text="Log Status:"
             android:textSize="16sp"
             android:textStyle="bold" />
 
-        <!-- Wrapping TableLayout in ScrollView & HorizontalScrollView -->
-        <ScrollView
+        <!-- Attendance Table -->
+        <TableLayout
+            android:id="@+id/tableLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:stretchColumns="*"
+            android:padding="8dp">
+
+            <!-- Table Header -->
+            <TableRow android:background="@color/black">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="Date"
+                    android:textColor="@android:color/white"
+                    android:padding="8dp"
+                    android:textStyle="bold"
+                    android:gravity="center" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="Time In"
+                    android:textColor="@android:color/white"
+                    android:padding="8dp"
+                    android:textStyle="bold"
+                    android:gravity="center" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="Time Out"
+                    android:textColor="@android:color/white"
+                    android:padding="8dp"
+                    android:textStyle="bold"
+                    android:gravity="center" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="Duration"
+                    android:textColor="@android:color/white"
+                    android:padding="8dp"
+                    android:textStyle="bold"
+                    android:gravity="center" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="Status"
+                    android:textColor="@android:color/white"
+                    android:padding="8dp"
+                    android:textStyle="bold"
+                    android:gravity="center" />
+            </TableRow>
+
+            <!-- Example Row (Dynamically added via code) -->
+            <TableRow>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="2025-03-06"
+                    android:padding="8dp"
+                    android:gravity="center" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="08:00 AM"
+                    android:padding="8dp"
+                    android:gravity="center" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="05:00 PM"
+                    android:padding="8dp"
+                    android:gravity="center" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="9h"
+                    android:padding="8dp"
+                    android:gravity="center" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="Completed"
+                    android:padding="8dp"
+                    android:gravity="center" />
+            </TableRow>
+
+        </TableLayout>
+
+
+        <!-- Scrollable Log List -->
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:fillViewport="true">
 
-            <HorizontalScrollView
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewDutyLogs"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TableLayout
-                    android:id="@+id/tableLayout"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="8dp"
-                    android:stretchColumns="*">
-
-                    <!-- Table Header -->
-                    <TableRow android:background="@color/black">
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:padding="8dp"
-                            android:text="Date"
-                            android:textColor="@android:color/white"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:padding="8dp"
-                            android:text="Time In"
-                            android:textColor="@android:color/white"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:padding="8dp"
-                            android:text="Time Out"
-                            android:textColor="@android:color/white"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:padding="8dp"
-                            android:text="Status"
-                            android:textColor="@android:color/white"
-                            android:textStyle="bold" />
-                    </TableRow>
-
-                </TableLayout>
-            </HorizontalScrollView>
-        </ScrollView>
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                android:padding="8dp" />
+        </androidx.core.widget.NestedScrollView>
 
     </LinearLayout>
 
     <!-- Submission Form -->
     <LinearLayout
         android:id="@+id/sublog"
-        android:layout_width="407dp"
-        android:layout_height="322dp"
+        android:layout_width="411dp"
+        android:layout_height="341dp"
         android:layout_margin="16dp"
         android:background="@drawable/container"
         android:elevation="10dp"
         android:orientation="vertical"
         android:padding="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/attendanceLayout">
 
         <TextView
-            android:layout_width="100dp"
-            android:layout_height="16sp"
-            android:text="@string/date" />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/date"
+            android:textSize="16sp" />
 
-        <TextView
+        <EditText
             android:id="@+id/dateInput"
             android:layout_width="match_parent"
             android:layout_height="55dp"
             android:background="@android:color/white"
             android:clickable="true"
-            android:focusable="false"
+            android:focusable="true"
             android:hint="Select Date"
             android:padding="12dp"
             android:textSize="14sp" />
@@ -164,13 +222,13 @@
             android:text="@string/time_in"
             android:textSize="16sp" />
 
-        <TextView
+        <EditText
             android:id="@+id/timeIn"
             android:layout_width="match_parent"
             android:layout_height="55dp"
             android:background="@android:color/white"
             android:clickable="true"
-            android:focusable="false"
+            android:focusable="true"
             android:hint="Select Time In"
             android:padding="12dp"
             android:textSize="14sp" />
@@ -181,13 +239,13 @@
             android:text="@string/time_out"
             android:textSize="16sp" />
 
-        <TextView
+        <EditText
             android:id="@+id/timeOut"
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:background="@android:color/white"
             android:clickable="true"
-            android:focusable="false"
+            android:focusable="true"
             android:hint="Select Time Out"
             android:padding="12dp"
             android:textSize="14sp" />
@@ -203,6 +261,7 @@
 
     </LinearLayout>
 
+    <!-- View Past Logs Button -->
     <Button
         android:id="@+id/pstLogs"
         android:layout_width="283dp"

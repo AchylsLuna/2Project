@@ -1,8 +1,9 @@
 package API
 
-data class TimeLogRequest(
+data class TimeLogItem(
+    val id: String,
     val log_date: String,
     val time_in: String,
     val time_out: String,
-    val timeLog: String
+    val status: String  // Keeping only status
 )

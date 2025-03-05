@@ -1,12 +1,16 @@
 package com.example.scholarly
 
+import API.DutyLogItem
 import API.DutyLogRequest
 import API.DutyLogResponse
 import API.PastLogsRequest
 import API.PastLogsResponse
+import API.TimeLogRequest
+
 import API.TimeLogResponse
 import retrofit2.Call
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.POST
 
@@ -24,6 +28,11 @@ interface APIService {
     @POST("getPastLogs")
     fun getPastLogs(@Body request: PastLogsRequest): Call<PastLogsResponse>
 
+    @GET("duty-logs") // Adjust this to match your API endpoint
+    fun getDutyLogs(): Call<List<DutyLogItem>>
+
+    @POST("insertTimeLog") // Adjust the endpoint accordingly
+    fun insertTimeLog(@Body log: TimeLogRequest): Call<Void>
 
 
 

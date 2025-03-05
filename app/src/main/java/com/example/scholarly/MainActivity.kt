@@ -2,7 +2,6 @@ package com.example.scholarly
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
@@ -25,7 +24,7 @@ class MainActivity : AppCompatActivity() {
             val password = passwordEditText.text.toString().trim()
 
             if (studentId.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, "Enter Student ID and Password", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Please enter Student ID and Password", Toast.LENGTH_SHORT).show()
             } else {
                 loginUser(studentId, password)
             }
@@ -33,28 +32,25 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loginUser(studentId: String, password: String) {
-        Log.d("LOGIN", "Attempting login with ID: $studentId") // Log before request
+        val apiService = ApiClient.retrofit.create(APIService::class.java)
+        val call = apiService.loginUser(LoginRequest(studentId, password))
 
-        ApiClient.retrofit.create(APIService::class.java)
-            .loginUser(LoginRequest(studentId, password))
-            .enqueue(object : Callback<LoginResponse> {
-                override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
-                    Log.d("LOGIN", "Response received: ${response.code()}") // Log response code
-
-                    if (response.isSuccessful && response.body()?.success == true) {
-                        Log.d("LOGIN", "OK!")
-                        startActivity(Intent(this@MainActivity, LogsActivity::class.java))
-                        finish()
-                    } else {
-                        Log.e("LOGIN", "Login failed: Wrong ID or Password")
-                        Toast.makeText(this@MainActivity, "Wrong ID or Password", Toast.LENGTH_SHORT).show()
-                    }
+        call.enqueue(object : Callback<LoginResponse> {
+            override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
+                if (response.isSuccessful && response.body()?.success == true) {
+                    val userId = response.body()?.user_id ?: -1  // Prevent crash if null
+                    val intent = Intent(this@MainActivity, LogsActivity::class.java)
+                    intent.putExtra("user_id", userId)
+                    startActivity(intent)
+                    finish()
+                } else {
+                    Toast.makeText(this@MainActivity, "Invalid Credentials", Toast.LENGTH_SHORT).show()
                 }
+            }
 
-                override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
-                    Log.e("LOGIN", "Login failed: ${t.message}")
-                    Toast.makeText(this@MainActivity, "Login failed: ${t.message}", Toast.LENGTH_SHORT).show()
-                }
-            })
-    }}
-
+            override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
+                Toast.makeText(this@MainActivity, "Login failed: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+}
