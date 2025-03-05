@@ -51,7 +51,7 @@
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.48" />
+                    app:layout_constraintVertical_bias="0.466" />
 
                 <EditText
                     android:id="@+id/username"
@@ -117,38 +117,7 @@
                     app:layout_constraintHorizontal_bias="0.493"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.845" />
-
-                <TextView
-                    android:id="@+id/signup_prompt"
-                    android:layout_width="196dp"
-                    android:layout_height="34dp"
-                    android:layout_marginBottom="40dp"
-                    android:text="@string/don_t_have_an_account"
-                    android:textSize="15sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.245"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/signInbtn" />
-
-                <TextView
-                    android:id="@+id/signUpbtn"
-                    android:layout_width="120dp"
-                    android:layout_height="56dp"
-                    android:layout_marginBottom="20dp"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:text="@string/sign_up_txt"
-                    android:textAlignment="center"
-                    android:textColor="@color/blue"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.784"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/signInbtn" />
+                    app:layout_constraintVertical_bias="0.832" />
 
                 <TextView
                     android:id="@+id/btnforgot"
@@ -165,7 +134,7 @@
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.764" />
+                    app:layout_constraintVertical_bias="0.732" />
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,7 +1,7 @@
 package com.example.scholarly
 
-import APIService
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
             val password = passwordEditText.text.toString().trim()
 
             if (studentId.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, "Please enter Student ID and Password", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Enter Student ID and Password", Toast.LENGTH_SHORT).show()
             } else {
                 loginUser(studentId, password)
             }
@@ -39,12 +39,10 @@ class MainActivity : AppCompatActivity() {
         call.enqueue(object : Callback<LoginResponse> {
             override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
                 if (response.isSuccessful && response.body()?.success == true) {
-                    val intent = Intent(this@MainActivity, LogsActivity::class.java)
-                    intent.putExtra("user_id", response.body()?.user_id)
-                    startActivity(intent)
+                    startActivity(Intent(this@MainActivity, LogsActivity::class.java))
                     finish()
                 } else {
-                    Toast.makeText(this@MainActivity, "Invalid Credentials", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@MainActivity, response.body()?.message ?: "Wrong ID or Password", Toast.LENGTH_SHORT).show()
                 }
             }
 
