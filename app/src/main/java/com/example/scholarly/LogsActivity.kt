@@ -4,39 +4,34 @@ import API.DutyLogRequest
 import API.DutyLogResponse
 import API.TimeLogRequest
 import API.TimeLogResponse
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import androidx.fragment.app.DialogFragment
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.*
 
 class LogsActivity : AppCompatActivity() {
 
     private lateinit var apiService: APIService
-    private lateinit var dutyLogsRecyclerView: RecyclerView
-    private lateinit var dutyLogAdapter: DutyLogAdapter
+    private lateinit var tableLayout: TableLayout
     private lateinit var dateInput: EditText
     private lateinit var timeIn: EditText
     private lateinit var timeOut: EditText
     private lateinit var submitButton: Button
-    private lateinit var tableLayout: TableLayout
-    private var studentId: String? = null  // Dynamically fetched student ID
+    private var studentId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_logs)
 
         apiService = ApiClient.retrofit.create(APIService::class.java)
-
-        dutyLogsRecyclerView = findViewById(R.id.recyclerViewDutyLogs)
-        dutyLogsRecyclerView.layoutManager = LinearLayoutManager(this)
-        dutyLogAdapter = DutyLogAdapter(emptyList())
-        dutyLogsRecyclerView.adapter = dutyLogAdapter
 
         tableLayout = findViewById(R.id.tableLayout)
         dateInput = findViewById(R.id.dateInput)
@@ -45,14 +40,29 @@ class LogsActivity : AppCompatActivity() {
         submitButton = findViewById(R.id.LogsSubmit)
 
         studentId = getStudentId()
-
-        if (studentId != null) {
-            fetchDutyLogs(studentId!!)
-        } else {
+        if (studentId.isNullOrEmpty()) {
             Toast.makeText(this, "Student ID not found. Please log in again.", Toast.LENGTH_SHORT).show()
+            finish() // Prevents app from crashing
+            return
         }
 
-        // Submit button click listener
+        fetchDutyLogs(studentId!!)
+
+        dateInput.setOnClickListener {
+            val datePicker = DatePickerFragment { selectedDate -> dateInput.setText(selectedDate) }
+            datePicker.show(supportFragmentManager, "datePicker")
+        }
+
+        timeIn.setOnClickListener {
+            val timePicker = TimePickerFragment { selectedTime -> timeIn.setText(selectedTime) }
+            timePicker.show(supportFragmentManager, "timePicker")
+        }
+
+        timeOut.setOnClickListener {
+            val timePicker = TimePickerFragment { selectedTime -> timeOut.setText(selectedTime) }
+            timePicker.show(supportFragmentManager, "timePicker")
+        }
+
         submitButton.setOnClickListener {
             val date = dateInput.text.toString().trim()
             val timeInText = timeIn.text.toString().trim()
@@ -61,15 +71,12 @@ class LogsActivity : AppCompatActivity() {
             if (date.isEmpty() || timeInText.isEmpty() || timeOutText.isEmpty()) {
                 Toast.makeText(this, "All fields are required!", Toast.LENGTH_SHORT).show()
             } else {
-                submitDutyLog(studentId ?: "", date, timeInText, timeOutText)
+                submitDutyLog(studentId!!, date, timeInText, timeOutText)
             }
         }
 
-        // Handle Past Logs Button Click
-        val pastLogsButton = findViewById<Button>(R.id.pstLogs)
-        pastLogsButton.setOnClickListener {
-            val intent = Intent(this, PastLogsActivity::class.java)
-            startActivity(intent)
+        findViewById<Button>(R.id.pstLogs).setOnClickListener {
+            startActivity(Intent(this, PastLogsActivity::class.java))
         }
     }
 
@@ -79,50 +86,17 @@ class LogsActivity : AppCompatActivity() {
     }
 
     private fun fetchDutyLogs(studentId: String) {
-        val request = DutyLogRequest(studentId)
-
-        apiService.getDutyLogs(request).enqueue(object : Callback<DutyLogResponse> {
+        apiService.getDutyLogs(DutyLogRequest(studentId)).enqueue(object : Callback<DutyLogResponse> {
             override fun onResponse(call: Call<DutyLogResponse>, response: Response<DutyLogResponse>) {
                 if (response.isSuccessful && response.body()?.success == true) {
-                    val logs = response.body()?.logs ?: emptyList()
-
-                    // Clear previous rows (keep header)
                     tableLayout.removeViews(1, tableLayout.childCount - 1)
-
-                    for (log in logs) {
+                    response.body()?.logs?.forEach { log ->
                         val row = TableRow(this@LogsActivity)
-
-                        val dateText = TextView(this@LogsActivity)
-                        dateText.text = log.duty_date
-                        dateText.setPadding(8, 8, 8, 8)
-                        dateText.layoutParams = TableRow.LayoutParams(0, TableRow.LayoutParams.WRAP_CONTENT, 1f)
-
-                        val timeInText = TextView(this@LogsActivity)
-                        timeInText.text = log.time_in
-                        timeInText.setPadding(8, 8, 8, 8)
-                        timeInText.layoutParams = TableRow.LayoutParams(0, TableRow.LayoutParams.WRAP_CONTENT, 1f)
-
-                        val timeOutText = TextView(this@LogsActivity)
-                        timeOutText.text = log.time_out
-                        timeOutText.setPadding(8, 8, 8, 8)
-                        timeOutText.layoutParams = TableRow.LayoutParams(0, TableRow.LayoutParams.WRAP_CONTENT, 1f)
-
-                        val durationText = TextView(this@LogsActivity)
-                        durationText.text = log.duration
-                        durationText.setPadding(8, 8, 8, 8)
-                        durationText.layoutParams = TableRow.LayoutParams(0, TableRow.LayoutParams.WRAP_CONTENT, 1f)
-
-                        val statusText = TextView(this@LogsActivity)
-                        statusText.text = log.status
-                        statusText.setPadding(8, 8, 8, 8)
-                        statusText.layoutParams = TableRow.LayoutParams(0, TableRow.LayoutParams.WRAP_CONTENT, 1f)
-
-                        row.addView(dateText)
-                        row.addView(timeInText)
-                        row.addView(timeOutText)
-                        row.addView(durationText)
-                        row.addView(statusText)
-
+                        row.addView(addTextViewToRow(log.duty_date))
+                        row.addView(addTextViewToRow(log.time_in))
+                        row.addView(addTextViewToRow(log.time_out))
+                        row.addView(addTextViewToRow(log.duration))
+                        row.addView(addTextViewToRow(log.status))
                         tableLayout.addView(row)
                     }
                 } else {
@@ -137,21 +111,49 @@ class LogsActivity : AppCompatActivity() {
     }
 
     private fun submitDutyLog(studentId: String, date: String, timeIn: String, timeOut: String) {
-        val request = TimeLogRequest(studentId, date, timeIn, timeOut)
-
-        apiService.submitDutyLog(request).enqueue(object : Callback<TimeLogResponse> {
-            override fun onResponse(call: Call<TimeLogResponse>, response: Response<TimeLogResponse>) {
-                if (response.isSuccessful && response.body()?.success == true) {
-                    Toast.makeText(this@LogsActivity, "Log submitted successfully!", Toast.LENGTH_SHORT).show()
-                    fetchDutyLogs(studentId)  // Refresh logs after submission
-                } else {
-                    Toast.makeText(this@LogsActivity, "Failed to submit log.", Toast.LENGTH_SHORT).show()
+        apiService.submitDutyLog(TimeLogRequest(studentId, date, timeIn, timeOut))
+            .enqueue(object : Callback<TimeLogResponse> {
+                override fun onResponse(call: Call<TimeLogResponse>, response: Response<TimeLogResponse>) {
+                    if (response.isSuccessful && response.body()?.success == true) {
+                        Toast.makeText(this@LogsActivity, "Log submitted successfully!", Toast.LENGTH_SHORT).show()
+                        fetchDutyLogs(studentId)
+                    } else {
+                        Toast.makeText(this@LogsActivity, "Failed to submit log.", Toast.LENGTH_SHORT).show()
+                    }
                 }
-            }
 
-            override fun onFailure(call: Call<TimeLogResponse>, t: Throwable) {
-                Toast.makeText(this@LogsActivity, "Submission failed: ${t.message}", Toast.LENGTH_SHORT).show()
-            }
-        })
+                override fun onFailure(call: Call<TimeLogResponse>, t: Throwable) {
+                    Toast.makeText(this@LogsActivity, "Submission failed: ${t.message}", Toast.LENGTH_SHORT).show()
+                }
+            })
     }
+
+    private fun addTextViewToRow(text: String): TextView {
+        return TextView(this).apply {
+            this.text = text
+            setPadding(8, 8, 8, 8)
+            layoutParams = TableRow.LayoutParams(0, TableRow.LayoutParams.WRAP_CONTENT, 1f)
+            gravity = android.view.Gravity.CENTER
+        }
+    }
+}
+
+class DatePickerFragment(private val listener: (String) -> Unit) : DialogFragment() {
+    override fun onCreateDialog(savedInstanceState: Bundle?) = DatePickerDialog(
+        requireContext(),
+        { _, year, month, dayOfMonth -> listener("$year-${month + 1}-$dayOfMonth") },
+        Calendar.getInstance().get(Calendar.YEAR),
+        Calendar.getInstance().get(Calendar.MONTH),
+        Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
+    )
+}
+
+class TimePickerFragment(private val listener: (String) -> Unit) : DialogFragment() {
+    override fun onCreateDialog(savedInstanceState: Bundle?) = TimePickerDialog(
+        requireContext(),
+        { _, hour, minute -> listener(String.format("%02d:%02d", hour, minute)) },
+        Calendar.getInstance().get(Calendar.HOUR_OF_DAY),
+        Calendar.getInstance().get(Calendar.MINUTE),
+        true
+    )
 }

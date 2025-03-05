@@ -1,8 +1,8 @@
 package com.example.scholarly
 
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
@@ -33,22 +33,28 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loginUser(studentId: String, password: String) {
-        val apiService = ApiClient.retrofit.create(APIService::class.java)
-        val call = apiService.loginUser(LoginRequest(studentId, password))
+        Log.d("LOGIN", "Attempting login with ID: $studentId") // Log before request
 
-        call.enqueue(object : Callback<LoginResponse> {
-            override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
-                if (response.isSuccessful && response.body()?.success == true) {
-                    startActivity(Intent(this@MainActivity, LogsActivity::class.java))
-                    finish()
-                } else {
-                    Toast.makeText(this@MainActivity, response.body()?.message ?: "Wrong ID or Password", Toast.LENGTH_SHORT).show()
+        ApiClient.retrofit.create(APIService::class.java)
+            .loginUser(LoginRequest(studentId, password))
+            .enqueue(object : Callback<LoginResponse> {
+                override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
+                    Log.d("LOGIN", "Response received: ${response.code()}") // Log response code
+
+                    if (response.isSuccessful && response.body()?.success == true) {
+                        Log.d("LOGIN", "OK!")
+                        startActivity(Intent(this@MainActivity, LogsActivity::class.java))
+                        finish()
+                    } else {
+                        Log.e("LOGIN", "Login failed: Wrong ID or Password")
+                        Toast.makeText(this@MainActivity, "Wrong ID or Password", Toast.LENGTH_SHORT).show()
+                    }
                 }
-            }
 
-            override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
-                Toast.makeText(this@MainActivity, "Login failed: ${t.message}", Toast.LENGTH_SHORT).show()
-            }
-        })
-    }
-}
+                override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
+                    Log.e("LOGIN", "Login failed: ${t.message}")
+                    Toast.makeText(this@MainActivity, "Login failed: ${t.message}", Toast.LENGTH_SHORT).show()
+                }
+            })
+    }}
+
