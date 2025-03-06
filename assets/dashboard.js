@@ -365,7 +365,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const data = {
         labels: labels,
         datasets: [{
-            label: 'Number of Scholars',
+            label: 'Total Students',
             data: [12, 19, 3, 5, 2, 3], 
             backgroundColor: [
                 'rgba(255, 99, 132, 0.2)',
