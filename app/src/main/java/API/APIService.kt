@@ -11,6 +11,7 @@ import API.TimeLogResponse
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.Headers
 import retrofit2.http.POST
 
@@ -22,11 +23,12 @@ interface APIService {
     @POST("student/duty_logs.php")
     fun getDutyLogs(@Body request: DutyLogRequest): Call<DutyLogResponse>
 
-    @POST("student/submit_duty_log.php")
-    fun submitTimeLog(@Body request: API.TimeLogRequest): Call<TimeLogResponse>
 
     @POST("student/submit_duty_log.php")
-    fun submitLog(@Body request: API.TimeLogRequest): Call<TimeLogResponse>
+    fun submitTimeLog(
+        @Header("Cookie") sessionId: String,  // Send PHP session ID
+        @Body request: TimeLogRequest
+    ): Call<TimeLogResponse>
 
 
     @POST("getPastLogs")

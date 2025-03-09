@@ -33,15 +33,29 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loginUser(studentId: String, password: String) {
-        Log.d("LOGIN", "Attempting login with ID: $studentId") // Log before request
+        Log.d("LOGIN", "Attempting login with ID: $studentId")
 
         ApiClient.retrofit.create(APIService::class.java)
             .loginUser(LoginRequest(studentId, password))
             .enqueue(object : Callback<LoginResponse> {
                 override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
-                    Log.d("LOGIN", "Response received: ${response.code()}") // Log response code
+                    Log.d("LOGIN", "Response received: ${response.code()}")
 
                     if (response.isSuccessful && response.body()?.success == true) {
+                        val sessionId = response.body()?.session_id ?: ""
+
+                        // Save session ID in SharedPreferences
+                        if (sessionId.isNotEmpty()) {
+                            val sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE)
+                            with(sharedPreferences.edit()) {
+                                putString("SESSION_ID", sessionId)
+                                apply()
+                            }
+                            Log.d("LOGIN", "Session ID saved: $sessionId")
+                        } else {
+                            Log.e("LOGIN", "Session ID is missing!")
+                        }
+
                         Log.d("LOGIN", "Login successful")
                         startActivity(Intent(this@MainActivity, LogsActivity::class.java))
                         finish()
@@ -56,5 +70,4 @@ class MainActivity : AppCompatActivity() {
                     Toast.makeText(this@MainActivity, "Login failed: ${t.message}", Toast.LENGTH_SHORT).show()
                 }
             })
-    }
-}
+    }}

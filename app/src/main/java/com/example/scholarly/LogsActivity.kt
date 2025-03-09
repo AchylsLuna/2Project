@@ -6,7 +6,6 @@ import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.os.Bundle
 import android.widget.Button
-import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -31,43 +30,10 @@ class LogsActivity : AppCompatActivity() {
         timeOutTextView = findViewById(R.id.timeOut)
         submitButton = findViewById(R.id.LogsSubmit)
 
-        // Set up date picker
-        dateTextView.setOnClickListener {
-            val calendar = Calendar.getInstance()
-            val year = calendar.get(Calendar.YEAR)
-            val month = calendar.get(Calendar.MONTH)
-            val day = calendar.get(Calendar.DAY_OF_MONTH)
+        dateTextView.setOnClickListener { showDatePicker() }
+        timeInTextView.setOnClickListener { showTimePicker(timeInTextView) }
+        timeOutTextView.setOnClickListener { showTimePicker(timeOutTextView) }
 
-            val datePickerDialog = DatePickerDialog(this, { _, selectedYear, selectedMonth, selectedDay ->
-                dateTextView.text = "$selectedDay/${selectedMonth + 1}/$selectedYear"
-            }, year, month, day)
-            datePickerDialog.show()
-        }
-
-        // Set up time pickers
-        timeInTextView.setOnClickListener {
-            val calendar = Calendar.getInstance()
-            val hour = calendar.get(Calendar.HOUR_OF_DAY)
-            val minute = calendar.get(Calendar.MINUTE)
-
-            val timePickerDialog = TimePickerDialog(this, { _, selectedHour, selectedMinute ->
-                timeInTextView.text = "$selectedHour:$selectedMinute"
-            }, hour, minute, true)
-            timePickerDialog.show()
-        }
-
-        timeOutTextView.setOnClickListener {
-            val calendar = Calendar.getInstance()
-            val hour = calendar.get(Calendar.HOUR_OF_DAY)
-            val minute = calendar.get(Calendar.MINUTE)
-
-            val timePickerDialog = TimePickerDialog(this, { _, selectedHour, selectedMinute ->
-                timeOutTextView.text = "$selectedHour:$selectedMinute"
-            }, hour, minute, true)
-            timePickerDialog.show()
-        }
-
-        // Set up submit button
         submitButton.setOnClickListener {
             val date = dateTextView.text.toString().trim()
             val timeIn = timeInTextView.text.toString().trim()
@@ -81,22 +47,63 @@ class LogsActivity : AppCompatActivity() {
         }
     }
 
+    private fun showDatePicker() {
+        val calendar = Calendar.getInstance()
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH)
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+        DatePickerDialog(this, { _, selectedYear, selectedMonth, selectedDay ->
+            dateTextView.text = "$selectedYear-${selectedMonth + 1}-$selectedDay"
+        }, year, month, day).show()
+    }
+
+    private fun showTimePicker(textView: TextView) {
+        val calendar = Calendar.getInstance()
+        val hour = calendar.get(Calendar.HOUR_OF_DAY)
+        val minute = calendar.get(Calendar.MINUTE)
+
+        TimePickerDialog(this, { _, selectedHour, selectedMinute ->
+            textView.text = String.format("%02d:%02d:00", selectedHour, selectedMinute)
+        }, hour, minute, true).show()
+    }
+
     private fun submitLog(date: String, timeIn: String, timeOut: String) {
-        val request = TimeLogRequest(date, timeIn, timeOut, "log")
+        val sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE)
+        val sessionId = sharedPreferences.getString("SESSION_ID", "") ?: ""
+
+        if (sessionId.isEmpty()) {
+            Toast.makeText(this, "Session expired. Please log in again.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val request = TimeLogRequest(date, timeIn, timeOut)
 
         ApiClient.retrofit.create(APIService::class.java)
-            .submitTimeLog(request)
+            .submitTimeLog("PHPSESSID=$sessionId", request)
             .enqueue(object : Callback<TimeLogResponse> {
-                override fun onResponse(call: Call<TimeLogResponse>, response: Response<TimeLogResponse>) {
+                override fun onResponse(
+                    call: Call<TimeLogResponse>,
+                    response: Response<TimeLogResponse>
+                ) {
                     if (response.isSuccessful && response.body()?.success == true) {
-                        Toast.makeText(this@LogsActivity, "Log submitted successfully", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this@LogsActivity,
+                            "Log submitted successfully!",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     } else {
-                        Toast.makeText(this@LogsActivity, "Failed to submit log", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this@LogsActivity,
+                            "Failed: ${response.body()?.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
 
                 override fun onFailure(call: Call<TimeLogResponse>, t: Throwable) {
-                    Toast.makeText(this@LogsActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@LogsActivity, "Error: ${t.message}", Toast.LENGTH_SHORT)
+                        .show()
                 }
             })
     }

@@ -1,8 +1,7 @@
 package API
 
 data class TimeLogRequest(
-    val log_date: String,
+    val duty_date: String,
     val time_in: String,
-    val time_out: String,
-    val timeLog: String
+    val time_out: String
 )
