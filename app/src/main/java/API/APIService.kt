@@ -25,6 +25,10 @@ interface APIService {
     @POST("student/submit_duty_log.php")
     fun submitTimeLog(@Body request: API.TimeLogRequest): Call<TimeLogResponse>
 
+    @POST("student/submit_duty_log.php")
+    fun submitLog(@Body request: API.TimeLogRequest): Call<TimeLogResponse>
+
+
     @POST("getPastLogs")
     fun getPastLogs(@Body request: PastLogsRequest): Call<PastLogsResponse>
 
