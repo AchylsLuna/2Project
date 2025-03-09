@@ -23,7 +23,7 @@ interface APIService {
     fun getDutyLogs(@Body request: DutyLogRequest): Call<DutyLogResponse>
 
     @POST("student/submit_duty_log.php")
-    fun submitDutyLog(@Body request: API.TimeLogRequest): Call<TimeLogResponse>
+    fun submitTimeLog(@Body request: API.TimeLogRequest): Call<TimeLogResponse>
 
     @POST("getPastLogs")
     fun getPastLogs(@Body request: PastLogsRequest): Call<PastLogsResponse>

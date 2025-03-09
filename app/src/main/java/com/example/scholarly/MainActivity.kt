@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity() {
                     Log.d("LOGIN", "Response received: ${response.code()}") // Log response code
 
                     if (response.isSuccessful && response.body()?.success == true) {
-                        Log.d("LOGIN", "OK!")
+                        Log.d("LOGIN", "Login successful")
                         startActivity(Intent(this@MainActivity, LogsActivity::class.java))
                         finish()
                     } else {
@@ -56,5 +56,5 @@ class MainActivity : AppCompatActivity() {
                     Toast.makeText(this@MainActivity, "Login failed: ${t.message}", Toast.LENGTH_SHORT).show()
                 }
             })
-    }}
-
+    }
+}
