@@ -23,11 +23,13 @@ interface APIService {
     @POST("student/duty_logs.php")
     fun getDutyLogs(@Body request: DutyLogRequest): Call<DutyLogResponse>
 
+
     @POST("student/submit_duty_log.php")
     fun submitTimeLog(
-        @Header("Authorization") sessionToken: String,  // Send session token in Authorization header
+        @Header("Cookie") sessionId: String,  // Send PHP session ID
         @Body request: TimeLogRequest
     ): Call<TimeLogResponse>
+
 
     @POST("getPastLogs")
     fun getPastLogs(@Body request: PastLogsRequest): Call<PastLogsResponse>
@@ -37,4 +39,7 @@ interface APIService {
 
     @POST("insertTimeLog") // Adjust the endpoint accordingly
     fun insertTimeLog(@Body log: TimeLogRequest): Call<Void>
+
+
+
 }

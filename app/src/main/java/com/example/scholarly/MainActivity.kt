@@ -33,8 +33,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loginUser(studentId: String, password: String) {
-        Log.d("LOGIN", "Attempting login with ID: $studentId")
-
         ApiClient.retrofit.create(APIService::class.java)
             .loginUser(LoginRequest(studentId, password))
             .enqueue(object : Callback<LoginResponse> {
@@ -42,31 +40,31 @@ class MainActivity : AppCompatActivity() {
                     call: Call<LoginResponse>,
                     response: Response<LoginResponse>
                 ) {
-                    val rawResponse = response.errorBody()?.string() ?: response.body().toString()
-                    Log.d("LOGIN_RAW_RESPONSE", "Raw Response: $rawResponse") // ✅ Log raw response
-
                     if (response.isSuccessful && response.body()?.success == true) {
-                        val studentData = response.body()?.student
-                        val sessionToken = response.body()?.session_token
+                        val sessionId = response.body()?.session_id ?: ""
+                        val studentId = response.body()?.student?.student_id ?: ""
 
-                        val sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE)
-                        with(sharedPreferences.edit()) {
-                            putString("STUDENT_ID", studentData?.student_id)
-                            putString("SESSION_TOKEN", sessionToken)
-                            apply()
+                        if (sessionId.isNotEmpty() && studentId.isNotEmpty()) {
+                            val sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE)
+                            with(sharedPreferences.edit()) {
+                                putString("SESSION_ID", sessionId)
+                                putString("STUDENT_ID", studentId) // ✅ Store student_id
+                                apply()
+                            }
                         }
 
-                        Log.d("LOGIN", "Login successful. Student ID: ${studentData?.student_id}")
                         startActivity(Intent(this@MainActivity, LogsActivity::class.java))
                         finish()
                     } else {
-                        Log.e("LOGIN", "Login failed: ${response.message()}")
-                        Toast.makeText(this@MainActivity, "Wrong ID or Password", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this@MainActivity,
+                            "Wrong ID or Password",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
 
                 override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
-                    Log.e("LOGIN", "Login failed: ${t.message}")
                     Toast.makeText(
                         this@MainActivity,
                         "Login failed: ${t.message}",

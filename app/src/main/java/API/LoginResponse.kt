@@ -3,8 +3,9 @@ package com.example.scholarly
 data class LoginResponse(
     val success: Boolean,
     val message: String,
-    val session_token: String?,
-    val student: Student?
+    val user_id: Int?,
+    val session_id: String?,
+    val student: Student? // Define a proper Student data class
 )
 
 data class Student(
@@ -16,4 +17,3 @@ data class Student(
     val department: String,
     val hk_duty_status: String
 )
-
