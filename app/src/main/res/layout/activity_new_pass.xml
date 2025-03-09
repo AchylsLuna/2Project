@@ -45,7 +45,7 @@
             android:layout_width="364dp"
             android:layout_height="wrap_content"
             android:gravity="fill_vertical"
-            android:text="@string/Password"
+            android:text="@string/new_password"
             android:textColor="@color/black"
             android:textSize="20sp"
             android:layout_marginTop="30dp"
