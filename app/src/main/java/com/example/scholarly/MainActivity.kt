@@ -2,7 +2,6 @@ package com.example.scholarly
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
@@ -33,43 +32,35 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loginUser(studentId: String, password: String) {
-        ApiClient.retrofit.create(APIService::class.java)
-            .loginUser(LoginRequest(studentId, password))
-            .enqueue(object : Callback<LoginResponse> {
-                override fun onResponse(
-                    call: Call<LoginResponse>,
-                    response: Response<LoginResponse>
-                ) {
-                    if (response.isSuccessful && response.body()?.success == true) {
-                        val sessionId = response.body()?.session_id ?: ""
-                        val studentId = response.body()?.student?.student_id ?: ""
+        val apiService = ApiClient.retrofit.create(APIService::class.java)
 
-                        if (sessionId.isNotEmpty() && studentId.isNotEmpty()) {
+        apiService.loginUser(LoginRequest(studentId, password))
+            .enqueue(object : Callback<LoginResponse> {
+                override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
+                    if (response.isSuccessful) {
+                        val responseBody = response.body()
+                        if (responseBody?.success == true) {
+                            // Save session token and student details
                             val sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE)
                             with(sharedPreferences.edit()) {
-                                putString("SESSION_ID", sessionId)
-                                putString("STUDENT_ID", studentId) // ✅ Store student_id
+                                putString("SESSION_TOKEN", responseBody.token)
+                                responseBody.student?.let { student ->
+                                    putString("STUDENT_ID", student.student_id)
+                                }
                                 apply()
                             }
+                            startActivity(Intent(this@MainActivity, LogsActivity::class.java))
+                            finish()
+                        } else {
+                            Toast.makeText(this@MainActivity, "Login failed: ${responseBody?.message}", Toast.LENGTH_SHORT).show()
                         }
-
-                        startActivity(Intent(this@MainActivity, LogsActivity::class.java))
-                        finish()
                     } else {
-                        Toast.makeText(
-                            this@MainActivity,
-                            "Wrong ID or Password",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        Toast.makeText(this@MainActivity, "Login failed: Invalid credentials", Toast.LENGTH_SHORT).show()
                     }
                 }
 
                 override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
-                    Toast.makeText(
-                        this@MainActivity,
-                        "Login failed: ${t.message}",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    Toast.makeText(this@MainActivity, "Login failed: ${t.message}", Toast.LENGTH_SHORT).show()
                 }
             })
     }

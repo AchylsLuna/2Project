@@ -4,11 +4,14 @@ import API.TimeLogRequest
 import API.TimeLogResponse
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -20,6 +23,7 @@ class LogsActivity : AppCompatActivity() {
     private lateinit var timeInTextView: TextView
     private lateinit var timeOutTextView: TextView
     private lateinit var submitButton: Button
+    private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,6 +33,8 @@ class LogsActivity : AppCompatActivity() {
         timeInTextView = findViewById(R.id.timeIn)
         timeOutTextView = findViewById(R.id.timeOut)
         submitButton = findViewById(R.id.LogsSubmit)
+
+        sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE)
 
         dateTextView.setOnClickListener { showDatePicker() }
         timeInTextView.setOnClickListener { showTimePicker(timeInTextView) }
@@ -49,63 +55,58 @@ class LogsActivity : AppCompatActivity() {
 
     private fun showDatePicker() {
         val calendar = Calendar.getInstance()
-        val year = calendar.get(Calendar.YEAR)
-        val month = calendar.get(Calendar.MONTH)
-        val day = calendar.get(Calendar.DAY_OF_MONTH)
-
-        DatePickerDialog(this, { _, selectedYear, selectedMonth, selectedDay ->
-            dateTextView.text = "$selectedYear-${selectedMonth + 1}-$selectedDay"
-        }, year, month, day).show()
+        DatePickerDialog(this, { _, year, month, day ->
+            dateTextView.text = "%04d-%02d-%02d".format(year, month + 1, day)
+        }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show()
     }
 
     private fun showTimePicker(textView: TextView) {
         val calendar = Calendar.getInstance()
-        val hour = calendar.get(Calendar.HOUR_OF_DAY)
-        val minute = calendar.get(Calendar.MINUTE)
-
-        TimePickerDialog(this, { _, selectedHour, selectedMinute ->
-            textView.text = String.format("%02d:%02d:00", selectedHour, selectedMinute)
-        }, hour, minute, true).show()
+        TimePickerDialog(this, { _, hour, minute ->
+            textView.text = "%02d:%02d:00".format(hour, minute)
+        }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true).show()
     }
 
     private fun submitLog(date: String, timeIn: String, timeOut: String) {
-        val sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE)
-        val sessionId = sharedPreferences.getString("SESSION_ID", "") ?: ""
-        val studentId = sharedPreferences.getString("STUDENT_ID", "") ?: "" // ✅ Retrieve student_id
+        val sessionToken = sharedPreferences.getString("SESSION_TOKEN", "") ?: ""
 
-        if (sessionId.isEmpty() || studentId.isEmpty()) {
+        if (sessionToken.isEmpty()) {
             Toast.makeText(this, "Session expired. Please log in again.", Toast.LENGTH_SHORT).show()
             return
         }
 
-        val request = TimeLogRequest(studentId, date, date, timeIn, timeOut) // ✅ Include student_id
-
-        ApiClient.retrofit.create(APIService::class.java)
-            .submitTimeLog("PHPSESSID=$sessionId", request)
-            .enqueue(object : Callback<TimeLogResponse> {
-                override fun onResponse(
-                    call: Call<TimeLogResponse>,
-                    response: Response<TimeLogResponse>
-                ) {
-                    if (response.isSuccessful && response.body()?.success == true) {
-                        Toast.makeText(
-                            this@LogsActivity,
-                            "Log submitted successfully!",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    } else {
-                        Toast.makeText(
-                            this@LogsActivity,
-                            "Failed: ${response.body()?.message}",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }
-
-                override fun onFailure(call: Call<TimeLogResponse>, t: Throwable) {
-                    Toast.makeText(this@LogsActivity, "Error: ${t.message}", Toast.LENGTH_SHORT)
-                        .show()
-                }
+        val client = OkHttpClient.Builder()
+            .addInterceptor(HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.BODY
             })
+            .build()
+
+        val apiService = ApiClient.retrofit.newBuilder()
+            .client(client)
+            .build()
+            .create(APIService::class.java)
+
+        apiService.submitTimeLog(
+            mapOf("Authorization" to "Bearer $sessionToken"),
+            TimeLogRequest(date, timeIn, timeOut)
+        ).enqueue(object : Callback<TimeLogResponse> {
+            override fun onResponse(call: Call<TimeLogResponse>, response: Response<TimeLogResponse>) {
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        if (it.success) {
+                            Toast.makeText(this@LogsActivity, "Log submitted successfully!", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(this@LogsActivity, "Error: ${it.message}", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                } else {
+                    Toast.makeText(this@LogsActivity, "Submission failed: ${response.errorBody()?.string()}", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<TimeLogResponse>, t: Throwable) {
+                Toast.makeText(this@LogsActivity, "Network error: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 }

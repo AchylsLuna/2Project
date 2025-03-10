@@ -1,19 +1,21 @@
 package com.example.scholarly
 
+import com.google.gson.annotations.SerializedName
+
 data class LoginResponse(
-    val success: Boolean,
-    val message: String,
-    val user_id: Int?,
-    val session_id: String?,
-    val student: Student? // Define a proper Student data class
+    @SerializedName("success") val success: Boolean,
+    @SerializedName("message") val message: String,
+    @SerializedName("token") val token: String,
+    @SerializedName("student") val student: Student?
 )
 
+
 data class Student(
-    val id: Int,
-    val student_id: String,
-    val name: String,
-    val email: String,
-    val course: String,
-    val department: String,
-    val hk_duty_status: String
+    @SerializedName("id") val id: Int,
+    @SerializedName("student_id") val student_id: String,
+    @SerializedName("name") val name: String,
+    @SerializedName("email") val email: String,
+    @SerializedName("course") val course: String,
+    @SerializedName("department") val department: String,
+    @SerializedName("hk_duty_status") val hkDutyStatus: String
 )

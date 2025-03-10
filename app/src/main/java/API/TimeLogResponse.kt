@@ -1,6 +1,8 @@
 package API
 
+import com.google.gson.annotations.SerializedName
+
 data class TimeLogResponse(
-    val success: Boolean,
-    val message: String
+    @SerializedName("success") val success: Boolean,
+    @SerializedName("message") val message: String
 )
