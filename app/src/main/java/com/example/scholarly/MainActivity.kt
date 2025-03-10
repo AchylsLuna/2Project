@@ -1,6 +1,7 @@
 package com.example.scholarly
 
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
@@ -36,32 +37,51 @@ class MainActivity : AppCompatActivity() {
 
         apiService.loginUser(LoginRequest(studentId, password))
             .enqueue(object : Callback<LoginResponse> {
-                override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
+                override fun onResponse(
+                    call: Call<LoginResponse>,
+                    response: Response<LoginResponse>
+                ) {
                     if (response.isSuccessful) {
                         val responseBody = response.body()
                         if (responseBody?.success == true) {
-                            // Save session token and student details
+                            // Save all student details
                             val sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE)
                             with(sharedPreferences.edit()) {
                                 putString("SESSION_TOKEN", responseBody.token)
                                 responseBody.student?.let { student ->
-                                    putString("STUDENT_ID", student.student_id)
+                                    putString("STUDENT_ID", student.studentId)
+                                    putString("STUDENT_NAME", student.name)
+                                    putString("SCHOLARSHIP_TYPE", student.scholarshipType)
+                                    putString("COURSE", student.course)
+                                    putString("DEPARTMENT", student.department)
+                                    putString("DUTY_STATUS", student.hkDutyStatus)
                                 }
                                 apply()
                             }
                             startActivity(Intent(this@MainActivity, LogsActivity::class.java))
                             finish()
                         } else {
-                            Toast.makeText(this@MainActivity, "Login failed: ${responseBody?.message}", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                this@MainActivity,
+                                "Login failed: ${responseBody?.message}",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     } else {
-                        Toast.makeText(this@MainActivity, "Login failed: Invalid credentials", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this@MainActivity,
+                            "Login failed: ${response.errorBody()?.string()}",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
 
                 override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
-                    Toast.makeText(this@MainActivity, "Login failed: ${t.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this@MainActivity,
+                        "Login failed: ${t.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             })
-    }
-}
+    }}

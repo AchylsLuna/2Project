@@ -8,6 +8,8 @@ import API.PastLogsResponse
 import API.TimeLogRequest
 
 import API.TimeLogResponse
+import Model.UploadResponse
+import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -15,6 +17,7 @@ import retrofit2.http.Header
 import retrofit2.http.HeaderMap
 import retrofit2.http.Headers
 import retrofit2.http.POST
+import retrofit2.http.Part
 
 interface APIService {
     @Headers("Content-Type: application/json")
@@ -27,6 +30,12 @@ interface APIService {
         @Body request: TimeLogRequest
     ): Call<TimeLogResponse>
 
+
+    @POST("student/upload_profile.php")
+    fun uploadProfile(
+        @HeaderMap headers: Map<String, String>,
+        @Part file: MultipartBody.Part
+    ): Call<UploadResponse>
 
     @POST("getPastLogs")
     fun getPastLogs(@Body request: PastLogsRequest): Call<PastLogsResponse>

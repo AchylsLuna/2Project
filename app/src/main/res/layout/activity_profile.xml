@@ -26,11 +26,14 @@
         android:id="@+id/profileImage"
         android:layout_width="130dp"
         android:layout_height="130dp"
-
+        android:src="@drawable/profile_con"
+        android:scaleType="centerCrop"
+        android:clickable="true"
+        android:focusable="true"
         app:layout_constraintTop_toBottomOf="@id/btnBack"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="20dp"/>
+        android:layout_marginTop="16dp"/>
 
     <!-- Profile Name -->
     <TextView
@@ -47,7 +50,7 @@
         android:layout_marginTop="16dp" />
 
     <!-- Scholarship Details -->
-    <EditText
+    <TextView
         android:id="@+id/profileDetails"
         android:layout_width="367dp"
         android:layout_height="174dp"
@@ -71,7 +74,7 @@
         app:layout_constraintTop_toBottomOf="@id/profileName" />
 
     <!-- Activity Details -->
-    <EditText
+    <TextView
         android:id="@+id/profileActivity"
         android:layout_width="0dp"
         android:layout_height="0dp"

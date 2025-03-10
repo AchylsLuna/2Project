@@ -9,12 +9,12 @@ data class LoginResponse(
     @SerializedName("student") val student: Student?
 )
 
-
 data class Student(
     @SerializedName("id") val id: Int,
-    @SerializedName("student_id") val student_id: String,
+    @SerializedName("student_id") val studentId: String,
     @SerializedName("name") val name: String,
     @SerializedName("email") val email: String,
+    @SerializedName("scholarship_type") val scholarshipType: String?, // Must match JSON key
     @SerializedName("course") val course: String,
     @SerializedName("department") val department: String,
     @SerializedName("hk_duty_status") val hkDutyStatus: String
