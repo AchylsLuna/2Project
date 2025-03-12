@@ -8,7 +8,7 @@ data class PastLogsResponse(
 data class PastLogEntry(
     val date: String,
     val timeIn: String,
-    val timeOut: String,
-    val duration: String,
+    val timeOut: String?,  // Nullable to handle missing data
+    val duration: String?,
     val status: String
 )

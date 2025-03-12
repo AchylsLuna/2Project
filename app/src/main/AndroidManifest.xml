@@ -3,6 +3,7 @@
     <!-- Permissions for Internet and Network Access -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
@@ -29,9 +30,6 @@
             android:exported="false" />
         <activity
             android:name=".ForgotPassword"
-            android:exported="false" />
-        <activity
-            android:name=".InsertDutyActivity"
             android:exported="false" />
         <activity
             android:name=".PastLogsActivity"

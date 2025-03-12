@@ -1,8 +1,6 @@
 package com.example.scholarly
 
-import API.DutyLogItem
-import API.DutyLogRequest
-import API.DutyLogResponse
+
 import API.PastLogsRequest
 import API.PastLogsResponse
 import API.TimeLogRequest
@@ -12,8 +10,7 @@ import Model.UploadResponse
 import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.Header
+
 import retrofit2.http.HeaderMap
 import retrofit2.http.Headers
 import retrofit2.http.POST
@@ -37,7 +34,7 @@ interface APIService {
         @Part file: MultipartBody.Part
     ): Call<UploadResponse>
 
-    @POST("getPastLogs")
+    @POST("student/duty_logs.php")
     fun getPastLogs(@Body request: PastLogsRequest): Call<PastLogsResponse>
 
 }

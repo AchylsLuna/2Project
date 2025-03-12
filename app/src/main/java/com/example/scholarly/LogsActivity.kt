@@ -20,6 +20,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.util.*
 
+
 class LogsActivity : AppCompatActivity() {
 
     // UI Components
@@ -64,6 +65,12 @@ class LogsActivity : AppCompatActivity() {
         // Profile Navigation
         profileButton.setOnClickListener {
             navigateToProfile()
+        }
+
+        val pastLogsButton: Button = findViewById(R.id.pstLogs)
+        pastLogsButton.setOnClickListener {
+            val intent = Intent(this, PastLogsActivity::class.java)
+            startActivity(intent)
         }
     }
 
