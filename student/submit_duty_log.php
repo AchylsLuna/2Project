@@ -1,48 +1,98 @@
 <?php
-session_start();
-require_once '../config/database.php';  // Database connection
+require_once '../config/database.php';
 
 header("Content-Type: application/json");
+$response = ['success' => false, 'message' => ''];
 
-$response = array();
+try {
+    $headers = getallheaders();
+    $authHeader = $headers['Authorization'] ?? '';
+    $sessionToken = str_replace('Bearer ', '', trim($authHeader));
 
-// Ensure the user is logged in and has a student ID in session
-if (!isset($_SESSION['student_id'])) {
-    $response['success'] = false;
-    $response['message'] = "Unauthorized: Please log in.";
-    echo json_encode($response);
-    exit();
-}
+    if (empty($sessionToken)) {
+        throw new Exception("Missing authorization token", 401);
+    }
 
-$student_id = $_SESSION['student_id']; // Get student_id from session
+    if (!$pdo) {
+        throw new Exception("Database connection failed", 500);
+    }
 
-// Get the JSON input
-$data = json_decode(file_get_contents("php://input"), true);
+    // Get student ID from session token
+    $stmt = $pdo->prepare("SELECT id FROM students WHERE session_token = ?");
+    $stmt->execute([$sessionToken]);
+    $student = $stmt->fetch(PDO::FETCH_ASSOC);
 
-// Validate required fields
-if (!isset($data['duty_date'], $data['time_in'], $data['time_out'])) {
-    $response['success'] = false;
-    $response['message'] = "All fields are required.";
-    echo json_encode($response);
-    exit();
-}
+    if (!$student) {
+        throw new Exception("Invalid session token", 401);
+    }
 
-$duty_date = trim($data['duty_date']);
-$time_in = trim($data['time_in']);
-$time_out = trim($data['time_out']);
+    $data = json_decode(file_get_contents('php://input'), true);
 
-// Insert duty log with student_id from session
-$stmt = $pdo->prepare("INSERT INTO duty_logs (student_id, duty_date, time_in, time_out) VALUES (?, ?, ?, ?)");
-$success = $stmt->execute([$student_id, $duty_date, $time_in, $time_out]);
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        throw new Exception("Invalid JSON format", 400);
+    }
 
-if ($success) {
+    $requiredFields = ['duty_date', 'time_in', 'time_out'];
+    foreach ($requiredFields as $field) {
+        if (empty($data[$field])) {
+            throw new Exception("Missing required field: $field", 400);
+        }
+    }
+
+    $dutyDate = filter_var(trim($data['duty_date']), FILTER_SANITIZE_STRING);
+    $timeIn = filter_var(trim($data['time_in']), FILTER_SANITIZE_STRING);
+    $timeOut = filter_var(trim($data['time_out']), FILTER_SANITIZE_STRING);
+
+    if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $dutyDate)) {
+        throw new Exception("Invalid date format. Use YYYY-MM-DD", 400);
+    }
+
+    if (!preg_match('/^\d{2}:\d{2}:\d{2}$/', $timeIn) || 
+        !preg_match('/^\d{2}:\d{2}:\d{2}$/', $timeOut)) {
+        throw new Exception("Time format must be HH:MM:SS", 400);
+    }
+
+    // Calculate hours worked for this entry
+    $timeInObj = new DateTime($timeIn);
+    $timeOutObj = new DateTime($timeOut);
+    $interval = $timeInObj->diff($timeOutObj);
+    
+    $hoursWorkedEntry = $interval->h + ($interval->i / 60); // Convert minutes to fraction of an hour
+
+    // Insert new duty log
+    $stmt = $pdo->prepare("INSERT INTO duty_logs (student_id, duty_date, time_in, time_out, total_hours)
+                           VALUES (?, ?, ?, ?, ?)");
+    $success = $stmt->execute([$student['id'], $dutyDate, $timeIn, $timeOut, $hoursWorkedEntry]);
+
+    if (!$success) {
+        throw new Exception("Failed to submit duty log", 500);
+    }
+
+    // Calculate total hours worked on the current day
+    $stmt = $pdo->prepare("SELECT SUM(total_hours) AS hours_worked FROM duty_logs 
+                           WHERE student_id = ? AND duty_date = ?");
+    $stmt->execute([$student['id'], $dutyDate]);
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    $hoursWorked = $result['hours_worked'] ?? 0;
+
+    // Calculate cumulative total hours across all logs
+    $stmt = $pdo->prepare("SELECT SUM(total_hours) AS total_hours FROM duty_logs 
+                           WHERE student_id = ?");
+    $stmt->execute([$student['id']]);
+    $totalHours = $stmt->fetch(PDO::FETCH_ASSOC)['total_hours'] ?? 0;
+
+    // Response
     $response['success'] = true;
-    $response['message'] = "Duty log submitted successfully.";
-    $response['student_id'] = $student_id; // Return student_id in response
-} else {
-    $response['success'] = false;
-    $response['message'] = "Failed to submit duty log.";
+    $response['message'] = "Duty log submitted successfully";
+    $response['hours_worked'] = $hoursWorked;
+    $response['total_hours'] = $totalHours;
+
+    http_response_code(200);
+
+} catch (Exception $e) {
+    $response['message'] = $e->getMessage();
+    http_response_code($e->getCode() ?: 500);
 }
 
 echo json_encode($response);
-?>
+exit();

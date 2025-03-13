@@ -1,4 +1,5 @@
 <?php
+
 // session.php - Start and manage sessions
 
 // Ensure session settings are applied before session_start()

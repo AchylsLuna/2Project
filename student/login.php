@@ -1,75 +1,59 @@
 <?php
-session_start();
-require_once '../config/database.php';  // Include database connection
-require_once '../config/session.php';
+require_once '../config/database.php';
+header("Content-Type: application/json");
 
-$error = "";
-$success = "";
+$response = ['success' => false, 'message' => ''];
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $student_id = trim($_POST['student_id']);
-    $password = trim($_POST['password']);
-
-    if (!empty($student_id) && !empty($password)) {
-        // Use the $pdo instance to query the database
-        $stmt = $pdo->prepare("SELECT * FROM students WHERE student_id = ?");
-        $stmt->execute([$student_id]);
-        $student = $stmt->fetch();
-
-        if ($student && password_verify($password, $student['password'])) {
-            $_SESSION['student_id'] = trim($student['student_id']); // Store correctly formatted student ID
-            $_SESSION['name'] = $student['name'];
-            header("Location: dashboard.php");
-            exit();
-        } else {
-            $error = "Invalid Student ID or Password.";
-        }
-    } else {
-        $error = "Please fill in all fields.";
+try {
+    if ($_SERVER["REQUEST_METHOD"] != "POST") {
+        throw new Exception("Invalid request method", 405);
     }
+
+    $data = json_decode(file_get_contents("php://input"), true);
+    
+    if (empty($data['student_id']) || empty($data['password'])) {
+        throw new Exception("Please provide student ID and password", 400);
+    }
+
+    $student_id = trim($data['student_id']);
+    $password = trim($data['password']);
+
+    $stmt = $pdo->prepare("SELECT * FROM students WHERE student_id = ?");
+    $stmt->execute([$student_id]);
+    $student = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$student || !password_verify($password, $student['password'])) {
+        throw new Exception("Invalid credentials", 401);
+    }
+
+    // Generate and store token
+    $token = bin2hex(random_bytes(32));
+    $updateStmt = $pdo->prepare("UPDATE students SET session_token = ? WHERE id = ?");
+    $updateStmt->execute([$token, $student['id']]);
+
+    $response = [
+        'success' => true,
+        'message' => 'Login successful',
+        'token' => $token,
+        'student' => [
+            'id' => $student['id'],
+            'student_id' => $student['student_id'],
+            'name' => $student['name'],
+            'email' => $student['email'],
+            'scholarship_type' => $student['scholarship_type'], // Must match DB column name
+            'course' => $student['course'],
+            'department' => $student['department'],
+            'hk_duty_status' => $student['hk_duty_status']
+        ]
+    ];
+
+} catch (PDOException $e) {
+    $response['message'] = "Database error: " . $e->getMessage();
+} catch (Exception $e) {
+    $response['message'] = $e->getMessage();
+    http_response_code($e->getCode() ?: 500);
 }
+
+echo json_encode($response);
+exit();
 ?>
-
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Login</title>
-    <link rel="stylesheet" href="../assets/login.css">
-</head>
-
-<body>
-    <div class="container">
-        <div class="left">
-            <img src="../assets/image/Rectangle bg.png" alt="Student Login">
-        </div>
-        <div class="right">
-            <h2>Student Login</h2>
-
-            <?php if ($error): ?>
-            <p class="error"><?php echo $error; ?></p>
-            <?php endif; ?>
-
-            <form action="" method="POST">
-                <label for="student_id">Student ID:</label>
-                <input type="text" name="student_id" required placeholder="Enter your student ID" required>
-
-                <label for="password">Password:</label>
-                <input type="password" name="password" required placeholder="Enter your password" required>
-
-                <button type="submit" class="btn">Login</button>
-            </form>
-
-            <div class="divider">or</div>
-            <a href="register.php" class="signup-btn">Register Here</a>
-
-            <p class="terms">
-                By logging in, you agree to our <a href="#">Terms & Conditions</a>.
-            </p>
-        </div>
-    </div>
-</body>
-
-</html>
