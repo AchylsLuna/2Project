@@ -123,4 +123,5 @@
     <string name="successful">Successful</string>
     <string name="total_hours_to_be_rendered_n_total_hours_rendered_n_type_of_scholarship">Total Hours to be rendered\n Total hours rendered: \n Type of ScholarShip</string>
     <string name="new_password">New Password</string>
+    <string name="view_logs">View Logs</string>
 </resources>

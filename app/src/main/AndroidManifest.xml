@@ -33,7 +33,7 @@
             android:exported="false" />
         <activity
             android:name=".PastLogsActivity"
-            android:exported="false" />
+            android:exported="true" />
         <activity
             android:name=".ProfileActivity"
             android:exported="true" />

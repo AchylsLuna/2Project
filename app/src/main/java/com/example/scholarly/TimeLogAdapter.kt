@@ -1,40 +1,35 @@
 package com.example.scholarly
 
-import API.TimeLogItem
+import API.PastLogEntry
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class TimeLogAdapter(private var logs: List<TimeLogItem>) :
+class TimeLogAdapter(private val logs: List<PastLogEntry>) :
     RecyclerView.Adapter<TimeLogAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val date: TextView = view.findViewById(R.id.log_date)
-        val timeIn: TextView = view.findViewById(R.id.log_time_in)
-        val timeOut: TextView = view.findViewById(R.id.log_time_out)
-        val status: TextView = view.findViewById(R.id.log_status) // Only keeping status
+        val logDate: TextView = view.findViewById(R.id.log_date)
+        val logTimeIn: TextView = view.findViewById(R.id.log_time_in)
+        val logTimeOut: TextView = view.findViewById(R.id.log_time_out)
+        val logStatus: TextView = view.findViewById(R.id.log_status)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_time_log, parent, false)
+            .inflate(R.layout.log_entry_item, parent, false)
         return ViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val log = logs[position]
-        holder.date.text = log.log_date
-        holder.timeIn.text = log.time_in
-        holder.timeOut.text = log.time_out
-        holder.status.text = log.status
+        holder.logDate.text = log.dutyDate
+        holder.logTimeIn.text = log.timeIn
+        holder.logTimeOut.text = log.timeOut ?: "N/A"
+        holder.logStatus.text = log.status
     }
 
     override fun getItemCount(): Int = logs.size
-
-    fun updateLogs(newLogs: List<TimeLogItem>) {
-        logs = newLogs
-        notifyDataSetChanged()
-    }
 }

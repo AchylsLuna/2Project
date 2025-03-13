@@ -10,29 +10,29 @@
         android:id="@+id/log_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Date:" />
+        android:text="Date: "
+        android:textSize="16sp"
+        android:textStyle="bold"/>
 
     <TextView
         android:id="@+id/log_time_in"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Time In:" />
+        android:text="Time In: "
+        android:textSize="14sp"/>
 
     <TextView
         android:id="@+id/log_time_out"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Time Out:" />
-
-    <TextView
-        android:id="@+id/log_duration"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Duration:" />
+        android:text="Time Out: "
+        android:textSize="14sp"/>
 
     <TextView
         android:id="@+id/log_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Status:" />
+        android:text="Status: "
+        android:textSize="14sp"/>
+
 </LinearLayout>
