@@ -1,10 +1,11 @@
 package com.example.scholarly
 
 import android.content.Intent
-import android.content.SharedPreferences
+
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import retrofit2.Call
@@ -19,6 +20,13 @@ class MainActivity : AppCompatActivity() {
         val studentIdEditText = findViewById<EditText>(R.id.username)
         val passwordEditText = findViewById<EditText>(R.id.password)
         val loginButton = findViewById<Button>(R.id.signInbtn)
+        val forgotPasswordTextView = findViewById<TextView>(R.id.btnforgot) // Added
+
+        // Navigate to ForgotPassword activity
+        forgotPasswordTextView.setOnClickListener {
+            val intent = Intent(this, ForgotPassword::class.java)
+            startActivity(intent)
+        }
 
         loginButton.setOnClickListener {
             val studentId = studentIdEditText.text.toString().trim()

@@ -1,5 +1,7 @@
 package com.example.scholarly
 import API.PastLogsResponse
+import API.ResetPasswordRequest
+import API.ResetPasswordResponse
 import API.TimeLogRequest
 import API.TimeLogResponse
 import retrofit2.Call
@@ -26,5 +28,9 @@ interface APIService {
 
     @GET("student/duty_logs.php") // Ensure this matches your backend endpoint
     fun getPastDutyLogs(@HeaderMap headers: Map<String, String>): Call<PastLogsResponse>
+
+    @POST("student/reset_password.php")
+    fun resetPassword(@Body request: ResetPasswordRequest): Call<ResetPasswordResponse>
+
 }
 
