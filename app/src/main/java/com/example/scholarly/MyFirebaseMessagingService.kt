@@ -1,7 +1,9 @@
-package com.example.scholarly // Adjust this to match your actual package
+package com.example.scholarly
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -11,7 +13,6 @@ import android.util.Log
 class MyFirebaseMessagingService : FirebaseMessagingService() {
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
-        // Handle incoming FCM messages here
         remoteMessage.notification?.let {
             val title = it.title ?: "Default Title"
             val body = it.body ?: "Default Body"
@@ -22,10 +23,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
-        // Handle token refresh here
         Log.d("FCM", "New token: $token")
-        // Example: Send the token to your server if needed
-        // You could call a function here to upload the token to your backend
     }
 
     private fun sendNotification(title: String, message: String) {
@@ -42,15 +40,31 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             notificationManager.createNotificationChannel(channel)
         }
 
+        // Intent to launch NotificationActivity when notification is tapped
+        val intent = Intent(this, NotificationActivity::class.java).apply {
+            putExtra("NOTIFICATION_TITLE", title)
+            putExtra("NOTIFICATION_BODY", message)
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+
+        // PendingIntent for the notification tap
+        val pendingIntent = PendingIntent.getActivity(
+            this,
+            0,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or (PendingIntent.FLAG_IMMUTABLE)
+        )
+
         // Build the notification
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
-            .setSmallIcon(R.drawable.ic_notification) // Must match your manifest's meta-data
+            .setSmallIcon(R.drawable.ic_notification) // Ensure this exists
             .setContentTitle(title)
             .setContentText(message)
-            .setAutoCancel(true) // Dismisses when tapped
+            .setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setContentIntent(pendingIntent) // Launch NotificationActivity on tap
 
-        // Show the notification with a unique ID
+        // Show the notification
         notificationManager.notify(1, notificationBuilder.build())
     }
 }
