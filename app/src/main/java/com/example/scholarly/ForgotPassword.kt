@@ -76,7 +76,7 @@ class ForgotPassword : AppCompatActivity() {
                     response.body()?.let {
                         if (it.success) {
                             showToast("Password reset successfully!")
-                            startActivity(Intent(this@ForgotPassword, MainActivity::class.java))
+                            startActivity(Intent(this@ForgotPassword, SuccessActivity::class.java))
                             finish()
                         } else {
                             showToast("Failed: ${it.message}")

@@ -7,7 +7,7 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class ProfileActivity : AppCompatActivity() {
     private lateinit var sharedPreferences: SharedPreferences
@@ -18,18 +18,31 @@ class ProfileActivity : AppCompatActivity() {
 
         sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE)
 
-        // Initialize views
         val profileName = findViewById<TextView>(R.id.profileName)
         val profileDetails = findViewById<TextView>(R.id.profileDetails)
         val logoutButton = findViewById<Button>(R.id.btnLogout)
-        val btnBack = findViewById<ImageView>(R.id.btnBack)
+        val bottomNavigation = findViewById<BottomNavigationView>(R.id.bottomNavigation)
 
-        // Load profile data
         loadProfileData(profileName, profileDetails)
-
-        // Set click listeners
-        btnBack.setOnClickListener { navigateToLogs() }
         logoutButton.setOnClickListener { performLogout() }
+
+        bottomNavigation.selectedItemId = R.id.nav_profile
+        bottomNavigation.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_home -> {
+                    startActivity(Intent(this, LogsActivity::class.java))
+                    finish()
+                    true
+                }
+                R.id.nav_notifications -> {
+                    startActivity(Intent(this, NotificationActivity::class.java))
+                    finish()
+                    true
+                }
+                R.id.nav_profile -> true
+                else -> false
+            }
+        }
     }
 
     private fun loadProfileData(profileName: TextView, profileDetails: TextView) {
@@ -62,7 +75,7 @@ class ProfileActivity : AppCompatActivity() {
         finish()
     }
 
-    @Deprecated("This method has been deprecated in favor of using the\n      {@link OnBackPressedDispatcher} via {@link #getOnBackPressedDispatcher()}.\n      The OnBackPressedDispatcher controls how back button events are dispatched\n      to one or more {@link OnBackPressedCallback} objects.")
+    @Deprecated("Deprecated in favor of OnBackPressedDispatcher")
     override fun onBackPressed() {
         navigateToLogs()
         super.onBackPressed()

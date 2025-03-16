@@ -1,7 +1,7 @@
 package com.example.scholarly
 
-import API.TimeLogRequest
 import API.PastLogsResponse
+import API.TimeLogRequest
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Intent
@@ -11,6 +11,7 @@ import android.util.Log
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
@@ -23,9 +24,9 @@ class LogsActivity : AppCompatActivity() {
     private lateinit var timeOutTextView: TextView
     private lateinit var totalHoursTextView: TextView
     private lateinit var submitButton: Button
-    private lateinit var profileButton: ImageButton
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var apiService: APIService
+    private lateinit var bottomNavigation: BottomNavigationView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,7 +36,8 @@ class LogsActivity : AppCompatActivity() {
         setupClickListeners()
         apiService = ApiClient.retrofit.create(APIService::class.java)
 
-        fetchTotalHours() // Fetch total hours on startup
+        fetchTotalHours()
+        setupBottomNavigation()
     }
 
     private fun initializeViews() {
@@ -44,7 +46,7 @@ class LogsActivity : AppCompatActivity() {
         timeOutTextView = findViewById(R.id.timeOut)
         totalHoursTextView = findViewById(R.id.totalhours)
         submitButton = findViewById(R.id.LogsSubmit)
-        profileButton = findViewById(R.id.profilee)
+        bottomNavigation = findViewById(R.id.bottomNavigation)
         sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE)
     }
 
@@ -52,12 +54,29 @@ class LogsActivity : AppCompatActivity() {
         dateTextView.setOnClickListener { showDatePicker() }
         timeInTextView.setOnClickListener { showTimePicker(timeInTextView) }
         timeOutTextView.setOnClickListener { showTimePicker(timeOutTextView) }
-
         submitButton.setOnClickListener { validateAndSubmitLog() }
-        profileButton.setOnClickListener { startActivity(Intent(this, ProfileActivity::class.java)) }
-
         findViewById<Button>(R.id.pstLogs).setOnClickListener {
             startActivity(Intent(this, PastLogsActivity::class.java))
+        }
+    }
+
+    private fun setupBottomNavigation() {
+        bottomNavigation.selectedItemId = R.id.nav_home
+        bottomNavigation.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_home -> true
+                R.id.nav_notifications -> {
+                    startActivity(Intent(this, NotificationActivity::class.java))
+                    finish()
+                    true
+                }
+                R.id.nav_profile -> {
+                    startActivity(Intent(this, ProfileActivity::class.java))
+                    finish()
+                    true
+                }
+                else -> false
+            }
         }
     }
 
@@ -104,7 +123,7 @@ class LogsActivity : AppCompatActivity() {
 
                 if (response.isSuccessful) {
                     showSuccessMessage("Log submitted successfully!")
-                    fetchTotalHours() // Fetch updated total hours
+                    fetchTotalHours()
                 } else {
                     showErrorMessage("Failed to submit log. Please try again.")
                 }
@@ -123,9 +142,9 @@ class LogsActivity : AppCompatActivity() {
                 override fun onResponse(call: Call<PastLogsResponse>, response: Response<PastLogsResponse>) {
                     if (response.isSuccessful) {
                         val logs = response.body()?.logs ?: emptyList()
-                        val totalHours = logs.sumOf { log ->
-                            log.timeOut?.let { calculateHours(log.timeIn, it) } ?: 0.0
-                        }
+                        val totalHours = logs
+                            .filter { it.status == "Approved" }
+                            .sumOf { it.total_hours ?: 0.0 } // Default to 0.0 if null
                         updateTotalHours(totalHours)
                     } else {
                         Log.e("API_ERROR", "Failed to fetch logs, response code: ${response.code()}")
@@ -136,16 +155,6 @@ class LogsActivity : AppCompatActivity() {
                     Log.e("API_ERROR", "Failed to fetch duty logs", t)
                 }
             })
-    }
-
-    private fun calculateHours(timeIn: String, timeOut: String): Double {
-        val inParts = timeIn.split(":").map { it.toInt() }
-        val outParts = timeOut.split(":").map { it.toInt() }
-
-        val inMinutes = inParts[0] * 60 + inParts[1]
-        val outMinutes = outParts[0] * 60 + outParts[1]
-
-        return ((outMinutes - inMinutes) / 60.0)
     }
 
     private fun updateTotalHours(hours: Double) {

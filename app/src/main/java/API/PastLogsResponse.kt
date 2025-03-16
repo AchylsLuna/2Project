@@ -5,4 +5,3 @@ data class PastLogsResponse(
     val logs: List<PastLogEntry>
 )
 
-

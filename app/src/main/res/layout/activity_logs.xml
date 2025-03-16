@@ -8,50 +8,30 @@
     tools:context=".LogsActivity"
     android:background="@color/white">
 
-    <!-- Fixed Attendance Layout -->
-    <ImageButton
-        android:id="@+id/profilee"
-        android:layout_width="77dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/profile_con"
-        android:backgroundTint="@color/green"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.883"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <TextView
         android:id="@+id/txtduty"
-        android:layout_width="266dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="10dp"
+        android:layout_width="284dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="40dp"
+        android:gravity="center"
         android:text="Let's Track your Duty"
-        android:textSize="20dp"
+        android:textSize="30dp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/profilee"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-
-    <!-- Submission Form -->
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/totalhours"
         android:layout_width="236dp"
         android:layout_height="44dp"
-        android:layout_marginTop="119dp"
-        android:text="Total Hours Rendered: 0"
         android:gravity="center"
+        android:text="Total Hours Rendered: 0"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/sublog"
+        app:layout_constraintTop_toBottomOf="@+id/txtduty"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtduty" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <LinearLayout
         android:id="@+id/sublog"
@@ -62,11 +42,9 @@
         android:elevation="10dp"
         android:orientation="vertical"
         android:padding="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/totalhours"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.601">
+        app:layout_constraintStart_toStartOf="parent">
 
         <TextView
             android:layout_width="100dp"
@@ -129,20 +107,30 @@
 
     </LinearLayout>
 
+    <!-- Add RecyclerView here -->
+
     <Button
         android:id="@+id/pstLogs"
         android:layout_width="283dp"
         android:layout_height="48dp"
-        android:layout_marginTop="38dp"
-        android:layout_marginBottom="80dp"
+        android:layout_marginBottom="8dp"
         android:backgroundTint="@color/green"
         android:text="@string/view_logs"
         android:textAlignment="center"
         android:textSize="20sp"
         android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/bottomNavigation"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigation"
+        android:layout_width="0dp"
+        android:layout_height="78dp"
+        android:layout_marginBottom="2dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sublog" />
+        app:menu="@menu/bottom_nav_menu" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

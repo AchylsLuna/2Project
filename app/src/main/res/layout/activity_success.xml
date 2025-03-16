@@ -49,6 +49,7 @@
         </RelativeLayout>
 
         <TextView
+            android:id="@+id/successContinue"
             android:layout_width="338dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"

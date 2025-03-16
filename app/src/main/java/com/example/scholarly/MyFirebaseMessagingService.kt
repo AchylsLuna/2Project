@@ -9,15 +9,23 @@ import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import android.util.Log
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
+    data class NotificationItem(val title: String, val body: String)
+
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
         remoteMessage.notification?.let {
             val title = it.title ?: "Default Title"
             val body = it.body ?: "Default Body"
             Log.d("FCM", "Message received: Title=$title, Body=$body")
-            sendNotification(title, body) // Show notification
+
+            // Save the new notification to the list in SharedPreferences
+            saveNotificationToList(title, body)
+
+            sendNotification(title, body)
         }
     }
 
@@ -26,11 +34,29 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         Log.d("FCM", "New token: $token")
     }
 
+    private fun saveNotificationToList(title: String, body: String) {
+        val sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE)
+        val gson = Gson()
+
+        // Retrieve the existing list of notifications
+        val notificationsJson = sharedPreferences.getString("NOTIFICATIONS_LIST", "[]")
+        val type = object : TypeToken<MutableList<NotificationItem>>() {}.type
+        val notifications: MutableList<NotificationItem> = gson.fromJson(notificationsJson, type) ?: mutableListOf()
+
+        // Add the new notification to the list
+        notifications.add(0, NotificationItem(title, body)) // Add to the start (newest first)
+
+        // Save the updated list back to SharedPreferences
+        with(sharedPreferences.edit()) {
+            putString("NOTIFICATIONS_LIST", gson.toJson(notifications))
+            apply()
+        }
+    }
+
     private fun sendNotification(title: String, message: String) {
         val channelId = "default_channel_id"
         val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
 
-        // Create notification channel for Android 8.0+ (API 26+)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 channelId,
@@ -40,31 +66,27 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             notificationManager.createNotificationChannel(channel)
         }
 
-        // Intent to launch NotificationActivity when notification is tapped
         val intent = Intent(this, NotificationActivity::class.java).apply {
             putExtra("NOTIFICATION_TITLE", title)
             putExtra("NOTIFICATION_BODY", message)
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
 
-        // PendingIntent for the notification tap
         val pendingIntent = PendingIntent.getActivity(
             this,
             0,
             intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or (PendingIntent.FLAG_IMMUTABLE)
+            PendingIntent.FLAG_UPDATE_CURRENT or (if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else 0)
         )
 
-        // Build the notification
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
-            .setSmallIcon(R.drawable.ic_notification) // Ensure this exists
+            .setSmallIcon(R.drawable.notification)
             .setContentTitle(title)
             .setContentText(message)
             .setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-            .setContentIntent(pendingIntent) // Launch NotificationActivity on tap
+            .setContentIntent(pendingIntent)
 
-        // Show the notification
         notificationManager.notify(1, notificationBuilder.build())
     }
 }
