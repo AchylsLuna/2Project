@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="msg_token_fmt">FCM Token: %s</string>
     <string name="duty_tracker">Duty Tracker</string>
     <string name="welcome_to">Welcome to</string>
     <string name="paperless_platform">This paperless platform improves efficiency</string>

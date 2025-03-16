@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.google.gms.google.services)
 }
 
 android {
@@ -13,7 +14,6 @@ android {
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -37,12 +37,11 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "11"  // Keep this aligned with Java 11
     }
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -55,16 +54,24 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    implementation (libs.material.v190)
+    implementation(libs.material.v190)
+    implementation(libs.androidx.navigation.fragment.ktx.v253)
+    implementation(libs.androidx.navigation.ui.ktx.v253)
 
-    implementation (libs.androidx.navigation.fragment.ktx.v253)
-    implementation (libs.androidx.navigation.ui.ktx.v253)
+    // NETWORK
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.logging.interceptor)
+
+    // NOTIFICATION
+    implementation(libs.firebase.bom)
+    implementation(libs.firebase.messaging.ktx)
+    implementation(libs.androidx.room.runtime)
 
 
-    //NETWORK:
-    implementation (libs.retrofit)
-    implementation (libs.converter.gson)
-    implementation (libs.logging.interceptor)
+    // ADMOB
+    implementation(libs.play.services.ads)
 
-
+    // OneSignal
+    implementation(libs.onesignal)
 }

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "942737446738",
+    "project_id": "mobile-web-d276b",
+    "storage_bucket": "mobile-web-d276b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:942737446738:android:99518bdc6394f1c9658c8b",
+        "android_client_info": {
+          "package_name": "com.example.scholarly"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCB_R5HDh25vmGnBoXq28OtQoLWP3KvxNg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
