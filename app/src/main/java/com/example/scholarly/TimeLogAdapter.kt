@@ -25,7 +25,6 @@ class TimeLogAdapter(private val logs: List<PastLogEntry>) :
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val log = logs[position]
-        holder.logDate.text = log.duty_date
         holder.logTimeIn.text = log.time_in
         holder.logTimeOut.text = log.time_out ?: "N/A"
         holder.logStatus.text = log.status

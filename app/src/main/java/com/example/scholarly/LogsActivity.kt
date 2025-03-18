@@ -16,6 +16,7 @@ import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.text.SimpleDateFormat
 import java.util.*
 
 class LogsActivity : AppCompatActivity() {
@@ -89,21 +90,47 @@ class LogsActivity : AppCompatActivity() {
 
     private fun showTimePicker(textView: TextView) {
         val calendar = Calendar.getInstance()
-        TimePickerDialog(this, { _, hour, minute ->
-            textView.text = "%02d:%02d:00".format(hour, minute)
-        }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true).show()
+        TimePickerDialog(this, { _, hourOfDay, minute ->
+            val calendarSelected = Calendar.getInstance().apply {
+                set(Calendar.HOUR_OF_DAY, hourOfDay)
+                set(Calendar.MINUTE, minute)
+            }
+            val displayFormat = SimpleDateFormat("h:mm a", Locale.getDefault())
+            textView.text = displayFormat.format(calendarSelected.time)
+        }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), false).show() // Changed to false for 12-hour format
     }
 
     private fun validateAndSubmitLog() {
         val date = dateTextView.text.toString().trim()
-        val timeIn = timeInTextView.text.toString().trim()
-        val timeOut = timeOutTextView.text.toString().trim()
+        val timeInDisplay = timeInTextView.text.toString().trim()
+        val timeOutDisplay = timeOutTextView.text.toString().trim()
 
-        if (date.isEmpty() || timeIn.isEmpty() || timeOut.isEmpty()) {
+        if (date.isEmpty() || timeInDisplay.isEmpty() || timeOutDisplay.isEmpty()) {
             Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show()
-        } else {
-            submitLog(date, timeIn, timeOut)
+            return
         }
+
+        // Convert 12-hour format with AM/PM to 24-hour format with seconds for API
+        val displayFormat = SimpleDateFormat("h:mm a", Locale.getDefault())
+        val apiFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+
+        val timeIn = try {
+            val dateIn = displayFormat.parse(timeInDisplay)
+            apiFormat.format(dateIn)
+        } catch (e: Exception) {
+            Log.e("TIME_PARSE_ERROR", "Failed to parse time_in: $timeInDisplay", e)
+            "00:00:00" // Fallback
+        }
+
+        val timeOut = try {
+            val dateOut = displayFormat.parse(timeOutDisplay)
+            apiFormat.format(dateOut)
+        } catch (e: Exception) {
+            Log.e("TIME_PARSE_ERROR", "Failed to parse time_out: $timeOutDisplay", e)
+            "00:00:00" // Fallback
+        }
+
+        submitLog(date, timeIn, timeOut)
     }
 
     private fun submitLog(date: String, timeIn: String, timeOut: String) {
@@ -144,7 +171,7 @@ class LogsActivity : AppCompatActivity() {
                         val logs = response.body()?.logs ?: emptyList()
                         val totalHours = logs
                             .filter { it.status == "Approved" }
-                            .sumOf { it.total_hours ?: 0.0 } // Default to 0.0 if null
+                            .sumOf { it.total_hours ?: 0.0 }
                         updateTotalHours(totalHours)
                     } else {
                         Log.e("API_ERROR", "Failed to fetch logs, response code: ${response.code()}")

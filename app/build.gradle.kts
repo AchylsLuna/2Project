@@ -75,4 +75,8 @@ dependencies {
 
     // OneSignal
     implementation(libs.onesignal)
+
+
+    //Profile picture
+    implementation (libs.glide)
 }

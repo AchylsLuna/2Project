@@ -56,9 +56,10 @@ class PastLogsActivity : AppCompatActivity() {
                 override fun onResponse(call: Call<PastLogsResponse>, response: Response<PastLogsResponse>) {
                     if (response.isSuccessful) {
                         val logs = response.body()?.logs ?: emptyList()
+                        Log.d("PAST_LOGS", "Fetched logs: $logs")
                         updateLogsList(logs)
                     } else {
-                        Log.e("API_ERROR", "Failed to fetch logs, response code: ${response.code()}")
+                        Log.e("API_ERROR", "Failed to fetch logs, response code: ${response.code()}, body: ${response.errorBody()?.string()}")
                     }
                 }
 
@@ -69,6 +70,19 @@ class PastLogsActivity : AppCompatActivity() {
     }
 
     private fun updateLogsList(logs: List<API.PastLogEntry>) {
-        recyclerView.adapter = LogsAdapter(logs)
+        // Define custom sorting order: Approved > Declined > Pending
+        val statusOrder = mapOf(
+            "Approved" to 0,
+            "Declined" to 1,
+            "Pending" to 2
+        )
+
+        // Sort logs by status, falling back to original order for unknown statuses
+        val sortedLogs = logs.sortedWith(compareBy { log ->
+            statusOrder[log.status] ?: Int.MAX_VALUE // Unknown statuses go last
+        })
+
+        Log.d("SORTED_LOGS", "Sorted logs: $sortedLogs")
+        recyclerView.adapter = LogsAdapter(sortedLogs)
     }
 }

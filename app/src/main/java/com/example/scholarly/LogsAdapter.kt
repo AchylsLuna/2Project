@@ -25,20 +25,32 @@ class LogsAdapter(private val logs: List<PastLogEntry>) : RecyclerView.Adapter<L
 
     override fun onBindViewHolder(holder: LogViewHolder, position: Int) {
         val log = logs[position]
-        val inputFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()) // Adjust based on Logcat
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
-        try {
-            val dateTime = inputFormat.parse(log.time_in)
-            val dateIn = dateFormat.format(dateTime)
-            val timeIn = timeFormat.format(dateTime)
-            val timeOut = log.time_out?.let { timeFormat.format(inputFormat.parse(it)) } ?: "N/A"
-            holder.dateText.text = dateIn
-            holder.timeText.text = "In: $timeIn - Out: $timeOut (${log.total_hours} hrs, ${log.status})"
-        } catch (e: Exception) {
-            Log.e("TIMESTAMP_ERROR", "Failed to parse timestamp: time_in=${log.time_in}, time_out=${log.time_out}", e)
+        val dateFormat = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault())
+        val timeFormat = SimpleDateFormat("h:mm a", Locale.getDefault()) // 12-hour format with AM/PM
+        val dateTimeFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+
+        if (log.time_in.isNotEmpty()) {
+            try {
+                val dateTime = dateTimeFormat.parse(log.time_in)
+                if (dateTime != null) {
+                    val dateIn = dateFormat.format(dateTime)
+                    val timeIn = timeFormat.format(dateTime)
+                    val timeOut = log.time_out?.let { timeFormat.format(dateTimeFormat.parse(it)) } ?: "N/A"
+                    holder.dateText.text = dateIn
+                    holder.timeText.text = "In: $timeIn - Out: $timeOut (${log.total_hours ?: 0.0} hrs, ${log.status})"
+                    Log.d("ADAPTER_DEBUG", "Parsed: date=$dateIn, time_in=$timeIn, time_out=$timeOut")
+                } else {
+                    throw IllegalArgumentException("Parsed dateTime is null")
+                }
+            } catch (e: Exception) {
+                Log.e("TIMESTAMP_ERROR", "Failed to parse timestamp: time_in=${log.time_in}, time_out=${log.time_out}", e)
+                holder.dateText.text = "Invalid Date"
+                holder.timeText.text = "In: N/A - Out: ${log.time_out ?: "N/A"} (${log.total_hours ?: 0.0} hrs, ${log.status})"
+            }
+        } else {
+            Log.e("DATA_ERROR", "Empty time_in for log: $log")
             holder.dateText.text = "Invalid Date"
-            holder.timeText.text = "In: N/A - Out: ${log.time_out ?: "N/A"} (${log.total_hours} hrs, ${log.status})"
+            holder.timeText.text = "In: N/A - Out: ${log.time_out ?: "N/A"} (${log.total_hours ?: 0.0} hrs, ${log.status})"
         }
     }
 

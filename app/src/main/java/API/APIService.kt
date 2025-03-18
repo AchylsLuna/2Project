@@ -4,15 +4,15 @@ import API.ResetPasswordRequest
 import API.ResetPasswordResponse
 import API.TimeLogRequest
 import API.TimeLogResponse
+import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.HeaderMap
 import retrofit2.http.Headers
+import retrofit2.http.Multipart
 import retrofit2.http.POST
-
-
-
+import retrofit2.http.Part
 
 
 interface APIService {
@@ -31,6 +31,13 @@ interface APIService {
 
     @POST("student/reset_password.php")
     fun resetPassword(@Body request: ResetPasswordRequest): Call<ResetPasswordResponse>
+
+    @Multipart
+    @POST("student/upload_profile_picture.php")
+    fun uploadProfilePicture(
+        @HeaderMap headers: Map<String, String>,
+        @Part image: MultipartBody.Part
+    ): Call<ProfilePictureResponse>
 
 }
 
