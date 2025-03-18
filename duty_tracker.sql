@@ -10,6 +10,7 @@ CREATE TABLE admin (
     password VARCHAR(255) NOT NULL,  -- Hashed password
     role ENUM('Super Admin', 'Department Admin') DEFAULT 'Department Admin',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    session_token VARCHAR(255) NULL;
 );
 
 -- Student Table
@@ -24,6 +25,7 @@ CREATE TABLE students (
     department VARCHAR(100) NOT NULL,  -- Student department
     hk_duty_status VARCHAR(100) NOT NULL,  -- Custom duty status set from frontend
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    profile_picture VARCHAR(255) DEFAULT NULL;
 );
 
 
