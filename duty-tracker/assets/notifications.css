@@ -1,0 +1,95 @@
+.notifications-container {
+    max-width: 800px;
+    margin: 20px auto;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+header h2 {
+    margin: 0;
+    font-size: 22px;
+}
+
+header a {
+    color: rgb(0, 0, 0);
+    padding: 8px 12px;
+    border-radius: 4px;
+}
+
+.notifications-list ul {
+    list-style: none;
+    padding: 0;
+}
+
+.notifications-list li {
+    background: #fff;
+    padding: 12px;
+    margin-bottom: 10px;
+    border-left: 5px solid #f39c12;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+.status {
+    font-weight: bold;
+    text-transform: capitalize;
+    color: #f39c12;
+}
+
+.view-link {
+    display: inline-block;
+    background: #28a745;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 3px;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+/* Three dots menu */
+.menu-container {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.menu-button {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    background: white;
+    border: 1px solid #ddd;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    width: 120px;
+    z-index: 10;
+}
+
+.dropdown-menu a {
+    display: block;
+    padding: 8px;
+    text-decoration: none;
+    color: black;
+    font-size: 14px;
+}
+
+.dropdown-menu a:hover {
+    background: #f0f0f0;
+}
