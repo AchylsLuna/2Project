@@ -1,5 +1,6 @@
 package com.example.scholarly
 
+import API.PastLogEntry
 import API.PastLogsResponse
 import API.TimeLogRequest
 import android.app.DatePickerDialog
@@ -8,9 +9,13 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
-import android.widget.*
+import android.widget.Button
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.launch
 import retrofit2.Call
@@ -25,6 +30,7 @@ class LogsActivity : AppCompatActivity() {
     private lateinit var timeOutTextView: TextView
     private lateinit var totalHoursTextView: TextView
     private lateinit var submitButton: Button
+    private lateinit var recyclerView: RecyclerView
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var apiService: APIService
     private lateinit var bottomNavigation: BottomNavigationView
@@ -36,7 +42,9 @@ class LogsActivity : AppCompatActivity() {
         initializeViews()
         setupClickListeners()
         apiService = ApiClient.retrofit.create(APIService::class.java)
+        sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE)
 
+        fetchPastLogs()
         fetchTotalHours()
         setupBottomNavigation()
     }
@@ -47,8 +55,9 @@ class LogsActivity : AppCompatActivity() {
         timeOutTextView = findViewById(R.id.timeOut)
         totalHoursTextView = findViewById(R.id.totalhours)
         submitButton = findViewById(R.id.LogsSubmit)
+        recyclerView = findViewById(R.id.recyclerView)
         bottomNavigation = findViewById(R.id.bottomNavigation)
-        sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE)
+        recyclerView.layoutManager = LinearLayoutManager(this)
     }
 
     private fun setupClickListeners() {
@@ -56,9 +65,6 @@ class LogsActivity : AppCompatActivity() {
         timeInTextView.setOnClickListener { showTimePicker(timeInTextView) }
         timeOutTextView.setOnClickListener { showTimePicker(timeOutTextView) }
         submitButton.setOnClickListener { validateAndSubmitLog() }
-        findViewById<Button>(R.id.pstLogs).setOnClickListener {
-            startActivity(Intent(this, PastLogsActivity::class.java))
-        }
     }
 
     private fun setupBottomNavigation() {
@@ -73,6 +79,11 @@ class LogsActivity : AppCompatActivity() {
                 }
                 R.id.nav_profile -> {
                     startActivity(Intent(this, ProfileActivity::class.java))
+                    finish()
+                    true
+                }
+                R.id.nav_logs -> {
+                    startActivity(Intent(this, PastLogsActivity::class.java))
                     finish()
                     true
                 }
@@ -97,7 +108,7 @@ class LogsActivity : AppCompatActivity() {
             }
             val displayFormat = SimpleDateFormat("h:mm a", Locale.getDefault())
             textView.text = displayFormat.format(calendarSelected.time)
-        }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), false).show() // Changed to false for 12-hour format
+        }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), false).show()
     }
 
     private fun validateAndSubmitLog() {
@@ -110,24 +121,25 @@ class LogsActivity : AppCompatActivity() {
             return
         }
 
-        // Convert 12-hour format with AM/PM to 24-hour format with seconds for API
         val displayFormat = SimpleDateFormat("h:mm a", Locale.getDefault())
         val apiFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
 
         val timeIn = try {
-            val dateIn = displayFormat.parse(timeInDisplay)
-            apiFormat.format(dateIn)
+            val timeInParsed = displayFormat.parse(timeInDisplay)
+            apiFormat.format(timeInParsed)
         } catch (e: Exception) {
-            Log.e("TIME_PARSE_ERROR", "Failed to parse time_in: $timeInDisplay", e)
-            "00:00:00" // Fallback
+            Log.e("SUBMIT_ERROR", "Failed to parse time_in: $timeInDisplay", e)
+            Toast.makeText(this, "Invalid Time In format", Toast.LENGTH_SHORT).show()
+            return
         }
 
         val timeOut = try {
-            val dateOut = displayFormat.parse(timeOutDisplay)
-            apiFormat.format(dateOut)
+            val timeOutParsed = displayFormat.parse(timeOutDisplay)
+            apiFormat.format(timeOutParsed)
         } catch (e: Exception) {
-            Log.e("TIME_PARSE_ERROR", "Failed to parse time_out: $timeOutDisplay", e)
-            "00:00:00" // Fallback
+            Log.e("SUBMIT_ERROR", "Failed to parse time_out: $timeOutDisplay", e)
+            Toast.makeText(this, "Invalid Time Out format", Toast.LENGTH_SHORT).show()
+            return
         }
 
         submitLog(date, timeIn, timeOut)
@@ -151,13 +163,44 @@ class LogsActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     showSuccessMessage("Log submitted successfully!")
                     fetchTotalHours()
+                    fetchPastLogs()
+                    resetForm()
                 } else {
-                    showErrorMessage("Failed to submit log. Please try again.")
+                    showErrorMessage("Failed to submit log. Error: ${response.code()}")
                 }
             } catch (e: Exception) {
                 handleNetworkError(e)
             }
         }
+    }
+
+    private fun fetchPastLogs() {
+        val sessionToken = sharedPreferences.getString("SESSION_TOKEN", "") ?: ""
+        if (sessionToken.isEmpty()) {
+            Log.e("SESSION_ERROR", "No session token found")
+            return
+        }
+
+        apiService.getPastDutyLogs(mapOf("Authorization" to "Bearer $sessionToken"))
+            .enqueue(object : Callback<PastLogsResponse> {
+                override fun onResponse(call: Call<PastLogsResponse>, response: Response<PastLogsResponse>) {
+                    if (response.isSuccessful) {
+                        val logs = response.body()?.logs ?: emptyList()
+                        Log.d("PAST_LOGS", "Fetched logs: $logs")
+                        updateLogsList(logs.take(3)) // Limit to 3 items
+                    } else {
+                        Log.e("API_ERROR", "Failed to fetch logs, response code: ${response.code()}, body: ${response.errorBody()?.string()}")
+                    }
+                }
+
+                override fun onFailure(call: Call<PastLogsResponse>, t: Throwable) {
+                    Log.e("API_ERROR", "Failed to fetch duty logs", t)
+                }
+            })
+    }
+
+    private fun updateLogsList(logs: List<PastLogEntry>) {
+        recyclerView.adapter = LogsAdapter(logs)
     }
 
     private fun fetchTotalHours() {
@@ -188,6 +231,12 @@ class LogsActivity : AppCompatActivity() {
         totalHoursTextView.text = "Total Hours Rendered: %.2f".format(hours)
     }
 
+    private fun resetForm() {
+        dateTextView.text = ""
+        timeInTextView.text = ""
+        timeOutTextView.text = ""
+    }
+
     private fun showSessionExpiredMessage() {
         Toast.makeText(this, "Session expired. Please log in again.", Toast.LENGTH_SHORT).show()
     }
@@ -198,10 +247,10 @@ class LogsActivity : AppCompatActivity() {
     }
 
     private fun showSuccessMessage(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "Message: $message", Toast.LENGTH_SHORT).show()
     }
 
     private fun showErrorMessage(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "Error: $message", Toast.LENGTH_SHORT).show()
     }
 }

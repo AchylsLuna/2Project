@@ -1,5 +1,7 @@
 package com.example.scholarly
 import API.PastLogsResponse
+import API.ProfilePictureFetchResponse
+import API.ProfilePictureResponse
 import API.ResetPasswordRequest
 import API.ResetPasswordResponse
 import API.TimeLogRequest
@@ -38,6 +40,11 @@ interface APIService {
         @HeaderMap headers: Map<String, String>,
         @Part image: MultipartBody.Part
     ): Call<ProfilePictureResponse>
+
+    @GET("student/get_profile_picture.php")
+    fun getProfilePicture(
+        @HeaderMap headers: Map<String, String>
+    ): Call<ProfilePictureFetchResponse>
 
 }
 

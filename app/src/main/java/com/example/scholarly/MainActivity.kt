@@ -156,16 +156,16 @@ class MainActivity : AppCompatActivity() {
                                 startActivity(Intent(this@MainActivity, LogsActivity::class.java))
                                 finish()
                             } else {
-                                showToast("Login failed: ${responseBody.message}")
+                                showToast("Wrong Student ID or Password")
                             }
                         }
                     } else {
-                        showToast("Login failed: ${response.errorBody()?.string()}")
+                        showToast("Wrong Student ID or Password")
                     }
                 }
 
                 override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
-                    showToast("Login failed: ${t.message}")
+                    showToast("Wrong Student ID or Password")
                 }
             })
     }

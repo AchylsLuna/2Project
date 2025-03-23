@@ -4,6 +4,12 @@
         android:id="@+id/nav_home"
         android:icon="@drawable/home"
         android:title="Home" />
+
+    <item
+        android:id="@+id/nav_logs"
+        android:icon="@drawable/duty_logs"
+        android:title="Duty Logs" />
+
     <item
         android:id="@+id/nav_notifications"
         android:icon="@drawable/notification"

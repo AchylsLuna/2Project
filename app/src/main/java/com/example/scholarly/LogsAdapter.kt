@@ -1,5 +1,6 @@
 package com.example.scholarly
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -7,8 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import API.PastLogEntry
 import java.text.SimpleDateFormat
-import java.util.Locale
-import android.util.Log
+import java.util.*
 
 class LogsAdapter(private val logs: List<PastLogEntry>) : RecyclerView.Adapter<LogsAdapter.LogViewHolder>() {
 
@@ -26,30 +26,45 @@ class LogsAdapter(private val logs: List<PastLogEntry>) : RecyclerView.Adapter<L
     override fun onBindViewHolder(holder: LogViewHolder, position: Int) {
         val log = logs[position]
         val dateFormat = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault())
-        val timeFormat = SimpleDateFormat("h:mm a", Locale.getDefault()) // 12-hour format with AM/PM
-        val dateTimeFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        val timeFormat = SimpleDateFormat("h:mm a", Locale.getDefault())
+        val apiDateTimeFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
 
+        // Log raw values for debugging
+        Log.d("ADAPTER_RAW", "Position $position - time_in: '${log.time_in}', time_out: '${log.time_out}'")
+
+        // Parse time_in to get date and time
         if (log.time_in.isNotEmpty()) {
             try {
-                val dateTime = dateTimeFormat.parse(log.time_in)
-                if (dateTime != null) {
-                    val dateIn = dateFormat.format(dateTime)
-                    val timeIn = timeFormat.format(dateTime)
-                    val timeOut = log.time_out?.let { timeFormat.format(dateTimeFormat.parse(it)) } ?: "N/A"
-                    holder.dateText.text = dateIn
+                val timeInDate = apiDateTimeFormat.parse(log.time_in)
+                if (timeInDate != null) {
+                    val date = dateFormat.format(timeInDate)
+                    val timeIn = timeFormat.format(timeInDate)
+
+                    // Parse time_out using the same format
+                    val timeOut = log.time_out?.let { timeOutStr ->
+                        try {
+                            val timeOutDate = apiDateTimeFormat.parse(timeOutStr)
+                            timeFormat.format(timeOutDate)
+                        } catch (e: Exception) {
+                            Log.e("ADAPTER_ERROR", "Failed to parse time_out: $timeOutStr", e)
+                            "N/A"
+                        }
+                    } ?: "N/A"
+
+                    holder.dateText.text = date
                     holder.timeText.text = "In: $timeIn - Out: $timeOut (${log.total_hours ?: 0.0} hrs, ${log.status})"
-                    Log.d("ADAPTER_DEBUG", "Parsed: date=$dateIn, time_in=$timeIn, time_out=$timeOut")
+                    Log.d("ADAPTER_SUCCESS", "Position $position - Date: $date, Time In: $timeIn, Time Out: $timeOut")
                 } else {
-                    throw IllegalArgumentException("Parsed dateTime is null")
+                    throw IllegalArgumentException("Parsed time_in is null")
                 }
             } catch (e: Exception) {
-                Log.e("TIMESTAMP_ERROR", "Failed to parse timestamp: time_in=${log.time_in}, time_out=${log.time_out}", e)
-                holder.dateText.text = "Invalid Date"
-                holder.timeText.text = "In: N/A - Out: ${log.time_out ?: "N/A"} (${log.total_hours ?: 0.0} hrs, ${log.status})"
+                Log.e("ADAPTER_ERROR", "Failed to parse time_in: ${log.time_in}", e)
+                holder.dateText.text = "Unknown Date"
+                holder.timeText.text = "In: Unknown - Out: ${log.time_out ?: "N/A"} (${log.total_hours ?: 0.0} hrs, ${log.status})"
             }
         } else {
-            Log.e("DATA_ERROR", "Empty time_in for log: $log")
-            holder.dateText.text = "Invalid Date"
+            Log.w("ADAPTER_EMPTY", "time_in is empty for log: $log")
+            holder.dateText.text = "No Date"
             holder.timeText.text = "In: N/A - Out: ${log.time_out ?: "N/A"} (${log.total_hours ?: 0.0} hrs, ${log.status})"
         }
     }

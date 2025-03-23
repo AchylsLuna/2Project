@@ -81,6 +81,12 @@ class NotificationActivity : AppCompatActivity() {
                     finish()
                     true
                 }
+                R.id.nav_logs -> {
+                    startActivity(Intent(this, PastLogsActivity::class.java))
+                    finish()
+                    true
+                }
+
                 else -> false
             }
         }

@@ -5,42 +5,60 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
-import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class PastLogsActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
-    private lateinit var backButton: Button
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var apiService: APIService
+    private lateinit var bottomNavigation: BottomNavigationView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_past_logs)
 
         initializeViews()
-        setupClickListeners()
         apiService = ApiClient.retrofit.create(APIService::class.java)
         sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE)
 
         fetchPastLogs()
+        setupBottomNavigation()
     }
 
     private fun initializeViews() {
         recyclerView = findViewById(R.id.recyclerView)
-        backButton = findViewById(R.id.backButton)
+        bottomNavigation = findViewById(R.id.bottomNavigation)
         recyclerView.layoutManager = LinearLayoutManager(this)
     }
 
-    private fun setupClickListeners() {
-        backButton.setOnClickListener {
-            startActivity(Intent(this, LogsActivity::class.java))
-            finish()
+    private fun setupBottomNavigation() {
+        bottomNavigation.selectedItemId = R.id.nav_logs
+        bottomNavigation.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_home -> {
+                    startActivity(Intent(this, LogsActivity::class.java))
+                    finish()
+                    true
+                }
+                R.id.nav_notifications -> {
+                    startActivity(Intent(this, NotificationActivity::class.java))
+                    finish()
+                    true
+                }
+                R.id.nav_profile -> {
+                    startActivity(Intent(this, ProfileActivity::class.java))
+                    finish()
+                    true
+                }
+                R.id.nav_logs -> true
+                else -> false
+            }
         }
     }
 
@@ -70,19 +88,6 @@ class PastLogsActivity : AppCompatActivity() {
     }
 
     private fun updateLogsList(logs: List<API.PastLogEntry>) {
-        // Define custom sorting order: Approved > Declined > Pending
-        val statusOrder = mapOf(
-            "Approved" to 0,
-            "Declined" to 1,
-            "Pending" to 2
-        )
-
-        // Sort logs by status, falling back to original order for unknown statuses
-        val sortedLogs = logs.sortedWith(compareBy { log ->
-            statusOrder[log.status] ?: Int.MAX_VALUE // Unknown statuses go last
-        })
-
-        Log.d("SORTED_LOGS", "Sorted logs: $sortedLogs")
-        recyclerView.adapter = LogsAdapter(sortedLogs)
+        recyclerView.adapter = LogsAdapter(logs)
     }
 }

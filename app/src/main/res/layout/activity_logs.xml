@@ -8,29 +8,52 @@
     tools:context=".LogsActivity"
     android:background="@color/white">
 
-    <!-- Add RecyclerView here -->
-
     <TextView
         android:id="@+id/txtduty"
-        android:layout_width="285dp"
-        android:layout_height="88dp"
-        android:layout_marginTop="40dp"
-        android:layout_marginBottom="40dp"
+        android:layout_width="281dp"
+        android:layout_height="68dp"
+        android:layout_marginTop="16dp"
         android:gravity="center"
         android:text="Let's Track your Duty"
         android:textSize="30dp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/totalhours"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="405dp"
+        android:layout_height="59dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="6dp"
+        android:hint="By Submitting your logs will help you track your hours by making it easier to manage your time."
+        android:textAlignment="center"
+        android:textColorHint="@color/gray"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtduty" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@color/white"
+        android:scrollbars="vertical"
+        app:layout_constraintTop_toBottomOf="@+id/textView"
+        app:layout_constraintBottom_toTopOf="@+id/totalhours"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
         android:id="@+id/totalhours"
         android:layout_width="236dp"
         android:layout_height="44dp"
         android:layout_marginTop="12dp"
-        android:layout_marginBottom="17dp"
+        android:layout_marginBottom="5dp"
         android:gravity="center"
         android:text="Total Hours Rendered: 0"
         android:textSize="18sp"
@@ -38,21 +61,19 @@
         app:layout_constraintBottom_toTopOf="@+id/sublog"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtduty" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <LinearLayout
         android:id="@+id/sublog"
-        android:layout_width="393dp"
-        android:layout_height="355dp"
+        android:layout_width="386dp"
+        android:layout_height="310dp"
         android:layout_margin="16dp"
         android:layout_marginStart="16dp"
-        android:layout_marginBottom="24dp"
         android:background="@drawable/container"
         android:elevation="10dp"
         android:orientation="vertical"
         android:padding="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/pstLogs"
+        app:layout_constraintBottom_toTopOf="@+id/bottomNavigation"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent">
@@ -117,21 +138,6 @@
             android:text="@string/submit" />
 
     </LinearLayout>
-
-    <Button
-        android:id="@+id/pstLogs"
-        android:layout_width="338dp"
-        android:layout_height="44dp"
-        android:layout_marginBottom="36dp"
-        android:backgroundTint="@color/green"
-        android:text="@string/view_logs"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/bottomNavigation"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.493"
-        app:layout_constraintStart_toStartOf="parent" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigation"
