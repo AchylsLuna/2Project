@@ -22,9 +22,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             val body = it.body ?: "Default Body"
             Log.d("FCM", "Message received: Title=$title, Body=$body")
 
-            // Save the new notification to the list in SharedPreferences
             saveNotificationToList(title, body)
-
             sendNotification(title, body)
         }
     }
@@ -32,21 +30,24 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     override fun onNewToken(token: String) {
         super.onNewToken(token)
         Log.d("FCM", "New token: $token")
+        // Note: No server sending; manually copy this token if it changes
+        val sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE)
+        with(sharedPreferences.edit()) {
+            putString("FCM_TOKEN", token)
+            apply()
+        }
     }
 
     private fun saveNotificationToList(title: String, body: String) {
         val sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE)
         val gson = Gson()
 
-        // Retrieve the existing list of notifications
         val notificationsJson = sharedPreferences.getString("NOTIFICATIONS_LIST", "[]")
         val type = object : TypeToken<MutableList<NotificationItem>>() {}.type
         val notifications: MutableList<NotificationItem> = gson.fromJson(notificationsJson, type) ?: mutableListOf()
 
-        // Add the new notification to the list
-        notifications.add(0, NotificationItem(title, body)) // Add to the start (newest first)
+        notifications.add(0, NotificationItem(title, body))
 
-        // Save the updated list back to SharedPreferences
         with(sharedPreferences.edit()) {
             putString("NOTIFICATIONS_LIST", gson.toJson(notifications))
             apply()
@@ -87,6 +88,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setContentIntent(pendingIntent)
 
-        notificationManager.notify(1, notificationBuilder.build())
+        notificationManager.notify(System.currentTimeMillis().toInt(), notificationBuilder.build())
     }
 }
