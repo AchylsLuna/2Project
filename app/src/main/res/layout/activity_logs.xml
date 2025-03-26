@@ -10,12 +10,12 @@
 
     <TextView
         android:id="@+id/txtduty"
-        android:layout_width="281dp"
-        android:layout_height="68dp"
+        android:layout_width="413dp"
+        android:layout_height="60dp"
         android:layout_marginTop="16dp"
         android:gravity="center"
         android:text="Let's Track your Duty"
-        android:textSize="30dp"
+        android:textSize="25dp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -50,23 +50,22 @@
 
     <TextView
         android:id="@+id/totalhours"
-        android:layout_width="236dp"
-        android:layout_height="44dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginBottom="5dp"
+        android:layout_width="376dp"
+        android:layout_height="47dp"
+        android:layout_marginBottom="4dp"
         android:gravity="center"
         android:text="Total Hours Rendered: 0"
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/sublog"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintHorizontal_bias="0.485"
         app:layout_constraintStart_toStartOf="parent" />
 
     <LinearLayout
         android:id="@+id/sublog"
-        android:layout_width="386dp"
-        android:layout_height="310dp"
+        android:layout_width="377dp"
+        android:layout_height="328dp"
         android:layout_margin="16dp"
         android:layout_marginStart="16dp"
         android:background="@drawable/container"

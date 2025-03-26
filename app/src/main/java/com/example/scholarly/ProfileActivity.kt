@@ -18,6 +18,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import retrofit2.Call
@@ -72,7 +73,7 @@ class ProfileActivity : AppCompatActivity() {
             Log.d("ProfileActivity", "Change profile picture button clicked")
             openImagePicker()
         }
-        logoutButton.setOnClickListener { performLogout() }
+        logoutButton.setOnClickListener { showLogoutDialog()}
 
         bottomNavigation.selectedItemId = R.id.nav_profile
         bottomNavigation.setOnItemSelectedListener { item ->
@@ -265,6 +266,7 @@ class ProfileActivity : AppCompatActivity() {
             return
         }
 
+
         val headers = mapOf("Authorization" to "Bearer $sessionToken")
 
         apiService.getProfilePicture(headers).enqueue(object : Callback<ProfilePictureFetchResponse> {
@@ -307,6 +309,15 @@ class ProfileActivity : AppCompatActivity() {
             Department: $department
             Duty Status: $dutyStatus
         """.trimIndent()
+    }
+
+    private fun showLogoutDialog() {
+        AlertDialog.Builder(this)
+            .setTitle("Logout")
+            .setMessage("Are you sure you want to logout?")
+            .setPositiveButton("Yes") { _, _ -> performLogout() }
+            .setNegativeButton("No", null)
+            .show()
     }
 
     private fun performLogout() {

@@ -44,8 +44,7 @@ class LogsActivity : AppCompatActivity() {
         apiService = ApiClient.retrofit.create(APIService::class.java)
         sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE)
 
-        fetchPastLogs()
-        fetchTotalHours()
+        fetchLogsAndTotalHours()
         setupBottomNavigation()
     }
 
@@ -122,31 +121,52 @@ class LogsActivity : AppCompatActivity() {
         }
 
         val displayFormat = SimpleDateFormat("h:mm a", Locale.getDefault())
-        val apiFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+        val apiFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
 
-        val timeIn = try {
+        val timeInFull: String
+        val timeOutFull: String
+
+        try {
             val timeInParsed = displayFormat.parse(timeInDisplay)
-            apiFormat.format(timeInParsed)
+            val calendarIn = Calendar.getInstance().apply {
+                time = timeInParsed
+                val dateParts = date.split("-").map { it.toInt() }
+                set(dateParts[0], dateParts[1] - 1, dateParts[2])
+            }
+            timeInFull = apiFormat.format(calendarIn.time)
         } catch (e: Exception) {
             Log.e("SUBMIT_ERROR", "Failed to parse time_in: $timeInDisplay", e)
             Toast.makeText(this, "Invalid Time In format", Toast.LENGTH_SHORT).show()
             return
         }
 
-        val timeOut = try {
+        try {
             val timeOutParsed = displayFormat.parse(timeOutDisplay)
-            apiFormat.format(timeOutParsed)
+            val calendarOut = Calendar.getInstance().apply {
+                time = timeOutParsed
+                val dateParts = date.split("-").map { it.toInt() }
+                set(dateParts[0], dateParts[1] - 1, dateParts[2])
+            }
+            timeOutFull = apiFormat.format(calendarOut.time)
         } catch (e: Exception) {
             Log.e("SUBMIT_ERROR", "Failed to parse time_out: $timeOutDisplay", e)
             Toast.makeText(this, "Invalid Time Out format", Toast.LENGTH_SHORT).show()
             return
         }
 
-        submitLog(date, timeIn, timeOut)
+        val timeInDate = apiFormat.parse(timeInFull)
+        val timeOutDate = apiFormat.parse(timeOutFull)
+        if (timeOutDate <= timeInDate) {
+            Toast.makeText(this, "Time Out must be after Time In", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        submitLog(date, timeInFull, timeOutFull)
     }
 
     private fun submitLog(date: String, timeIn: String, timeOut: String) {
         val sessionToken = sharedPreferences.getString("SESSION_TOKEN", "") ?: ""
+        Log.d("SUBMIT_LOG", "Sending session token: $sessionToken")
         if (sessionToken.isEmpty()) {
             showSessionExpiredMessage()
             return
@@ -159,14 +179,14 @@ class LogsActivity : AppCompatActivity() {
                 val response = apiService.submitTimeLog(
                     mapOf("Authorization" to "Bearer $sessionToken"), request
                 )
-
-                if (response.isSuccessful) {
+                if (response.isSuccessful && response.body()?.success == true) {
                     showSuccessMessage("Log submitted successfully!")
-                    fetchTotalHours()
-                    fetchPastLogs()
+                    fetchLogsAndTotalHours()
                     resetForm()
                 } else {
-                    showErrorMessage("Failed to submit log. Error: ${response.code()}")
+                    val errorBody = response.errorBody()?.string() ?: "No error body"
+                    Log.e("SUBMIT_LOG", "Failed: ${response.code()} - $errorBody")
+                    showErrorMessage("Failed to submit log. Error: ${response.code()} - $errorBody")
                 }
             } catch (e: Exception) {
                 handleNetworkError(e)
@@ -174,10 +194,11 @@ class LogsActivity : AppCompatActivity() {
         }
     }
 
-    private fun fetchPastLogs() {
+    private fun fetchLogsAndTotalHours() {
         val sessionToken = sharedPreferences.getString("SESSION_TOKEN", "") ?: ""
         if (sessionToken.isEmpty()) {
             Log.e("SESSION_ERROR", "No session token found")
+            totalHoursTextView.text = "Total Hours Rendered: 0 hrs 0 min"
             return
         }
 
@@ -187,14 +208,34 @@ class LogsActivity : AppCompatActivity() {
                     if (response.isSuccessful) {
                         val logs = response.body()?.logs ?: emptyList()
                         Log.d("PAST_LOGS", "Fetched logs: $logs")
-                        updateLogsList(logs.take(3)) // Limit to 3 items
+                        if (logs.isEmpty()) {
+                            Log.d("TOTAL_HOURS", "No logs found")
+                            totalHoursTextView.text = "Total Hours Rendered: 0 hrs 0 min"
+                            updateLogsList(emptyList())
+                            return@onResponse
+                        }
+
+                        updateLogsList(logs.take(3))
+
+                        val approvedLogs = logs.filter { it.status == "Approved" }
+                        Log.d("TOTAL_HOURS", "Approved logs: $approvedLogs")
+                        val totalHours = approvedLogs.sumOf { log ->
+                            val hours = log.total_hours?.toDouble() ?: 0.0
+                            Log.d("TOTAL_HOURS", "Log ID ${log.id}: total_hours = $hours")
+                            hours
+                        }
+                        Log.d("TOTAL_HOURS", "Calculated total hours: $totalHours")
+                        updateTotalHours(totalHours)
                     } else {
                         Log.e("API_ERROR", "Failed to fetch logs, response code: ${response.code()}, body: ${response.errorBody()?.string()}")
+                        totalHoursTextView.text = "Total Hours Rendered: 0 hrs 0 min"
+                        updateLogsList(emptyList())
                     }
                 }
-
                 override fun onFailure(call: Call<PastLogsResponse>, t: Throwable) {
                     Log.e("API_ERROR", "Failed to fetch duty logs", t)
+                    totalHoursTextView.text = "Total Hours Rendered: 0 hrs 0 min"
+                    updateLogsList(emptyList())
                 }
             })
     }
@@ -203,32 +244,15 @@ class LogsActivity : AppCompatActivity() {
         recyclerView.adapter = LogsAdapter(logs)
     }
 
-    private fun fetchTotalHours() {
-        val sessionToken = sharedPreferences.getString("SESSION_TOKEN", "") ?: ""
-        if (sessionToken.isEmpty()) return
-
-        apiService.getPastDutyLogs(mapOf("Authorization" to "Bearer $sessionToken"))
-            .enqueue(object : Callback<PastLogsResponse> {
-                override fun onResponse(call: Call<PastLogsResponse>, response: Response<PastLogsResponse>) {
-                    if (response.isSuccessful) {
-                        val logs = response.body()?.logs ?: emptyList()
-                        val totalHours = logs
-                            .filter { it.status == "Approved" }
-                            .sumOf { it.total_hours ?: 0.0 }
-                        updateTotalHours(totalHours)
-                    } else {
-                        Log.e("API_ERROR", "Failed to fetch logs, response code: ${response.code()}")
-                    }
-                }
-
-                override fun onFailure(call: Call<PastLogsResponse>, t: Throwable) {
-                    Log.e("API_ERROR", "Failed to fetch duty logs", t)
-                }
-            })
-    }
-
     private fun updateTotalHours(hours: Double) {
-        totalHoursTextView.text = "Total Hours Rendered: %.2f".format(hours)
+        val fullHours = hours.toInt()
+        val minutes = ((hours - fullHours) * 60).toInt()
+        val formattedHours = if (fullHours > 0) {
+            "$fullHours hr${if (fullHours > 1) "s" else ""}" + if (minutes > 0) " $minutes min" else ""
+        } else {
+            if (minutes > 0) "$minutes min" else "0 hrs"
+        }
+        totalHoursTextView.text = "Total Hours Rendered: $formattedHours"
     }
 
     private fun resetForm() {

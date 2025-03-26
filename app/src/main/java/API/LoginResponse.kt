@@ -10,7 +10,6 @@ data class LoginResponse(
 )
 
 data class Student(
-    @SerializedName("id") val id: Int,
     @SerializedName("student_id") val studentId: String,
     @SerializedName("name") val name: String,
     @SerializedName("email") val email: String,
